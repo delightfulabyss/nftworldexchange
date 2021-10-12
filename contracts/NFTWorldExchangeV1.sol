@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 contract NFTWorldExchangeImplmentationV1 {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-    address metaverseCoin;
+    address public metaverseCoin;
     mapping public (string  => address) wearables;
 
     function initialize external initializer(address _metaverseCoin, address address _admin) {
@@ -21,6 +21,6 @@ contract NFTWorldExchangeImplmentationV1 {
     }
 
     function depositMetaverseCoin external onlyRole(ADMIN_ROLE) returns (boolean) {
-        
+
     }
 }
