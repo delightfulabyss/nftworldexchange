@@ -8,5 +8,9 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 contract NFTWorldExchangeImplmentationV1 {
+    function initialize external initializer() {
 
+        //Parent initializer chain
+        __AccessControl_init();
+    }
 }
