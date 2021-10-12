@@ -33,4 +33,13 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange {
         IERC20(metaverseCoin).transferFrom(msg.sender, address(this), _amount);
         return true;
     }
+
+    function depositWearables(string _collectionName, uint256[] _tokenIds) external onlyRole(ADMIN_ROLE) returns (boolean) {
+        
+        IERC721(wearables[_collectionName]).safe
+    }
+
+    function withdrawWearables(uint256[] _tokenIds) external onlyRole(ADMIN_ROLE) returns (boolean) {
+
+    }
 }
