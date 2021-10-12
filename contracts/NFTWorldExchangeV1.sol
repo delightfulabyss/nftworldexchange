@@ -9,9 +9,11 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 contract NFTWorldExchangeImplmentationV1 {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-    function initialize external initializer() {
+    function initialize external initializer(address _admin) {
 
         //Parent initializer chain
         __AccessControl_init();
+
+        _setupRole(ADMIN_ROLE, _admin);
     }
 }
