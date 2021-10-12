@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
-contract NFTWorldExchangeImplmentationV1 {
+contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     address public metaverseCoin;
     mapping public (string  => address) wearables;
