@@ -13,4 +13,6 @@ interface INFTWorldExchange {
 
     event MetaverseCoinDeposit(address indexed from, uint256 indexed value);
     event MetaverseCoinWithdraw(address indexed to, uint256 indexed value);
+    event WearableDeposit(address indexed from, uint256[] indexed tokenIds);
+    event WearableWithdraw(address indexed to, uint256[] indexed tokenIds);
 }
