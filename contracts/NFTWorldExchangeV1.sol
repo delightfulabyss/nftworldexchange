@@ -2,7 +2,7 @@
 pragma solidity >=0.8.4;
 
 import "./INFTWorldExchange.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "./ERC721BaseCollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol;";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable";
@@ -36,10 +36,12 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange {
 
     function depositWearables(string _collectionName, uint256[] _tokenIds) external onlyRole(ADMIN_ROLE) returns (boolean) {
         
-        IERC721(wearables[_collectionName]).safe
+        ERC721BaseCollectionV2(wearables[_collectionName]).safeBatchTranfer(msg.sender, address(this), _tokenIds);
     }
 
     function withdrawWearables(uint256[] _tokenIds) external onlyRole(ADMIN_ROLE) returns (boolean) {
+
+        ERC721BaseCollectionV2(wearables[_collectionName]).safeBatchTranfer(address(this), msg.sender, _tokenIds);
 
     }
 }
