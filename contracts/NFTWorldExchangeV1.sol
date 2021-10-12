@@ -8,6 +8,7 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 contract NFTWorldExchangeImplmentationV1 {
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     function initialize external initializer() {
 
         //Parent initializer chain
