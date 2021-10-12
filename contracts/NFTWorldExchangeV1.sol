@@ -20,7 +20,16 @@ contract NFTWorldExchangeImplmentationV1 {
         _setupRole(ADMIN_ROLE, _admin);
     }
 
-    function depositMetaverseCoin external onlyRole(ADMIN_ROLE) returns (boolean) {
+    function depositMetaverseCoin (uint256 _amount) external onlyRole(ADMIN_ROLE) returns (boolean) {
+        require(IERC20(metaverseCoin).balanceOf(msg.sender) >= _amount, "NFTWorldExchange#depositMetaverseCoin: Deposit amount exceeds Metaverse Coin balance");
+        IERC20(metaverseCoin).approve(address(this), _amount);
+        IERC20(metaverseCoin).transferFrom(msg.sender, address(this), _amount);
+        return true;
+    }
 
+    function withdrawMetaverseCoin (uint256 _amount) external onlyRole(ADMIN_ROLE) returns (boolean) {
+        require(IERC20(metaverseCoin).balanceOf(address(this)) >= _amount, "NFTWorldExchange#withdrawMetaverseCoin: Withdraw amount exceeds Metaverse Coin balance");
+        IERC20(metaverseCoin).transferFrom(msg.sender, address(this), _amount);
+        return true;
     }
 }
