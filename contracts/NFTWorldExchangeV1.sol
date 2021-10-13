@@ -13,7 +13,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver I
     address public metaverseCoin;
     mapping public (string => uint256) exchangeRate;
     mapping public (string  => address) wearables;
-    uint256 public tradeback_fee;
+    uint256 public tradeback_percentage;
 
     function initialize external initializer(address _metaverseCoin, address address _admin) {
 
@@ -21,7 +21,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver I
         __AccessControl_init();
 
         _setupRole(ADMIN_ROLE, _admin);
-        tradeback_fee = 25;
+        tradeback_percentage = 25;
         exchangeRate["Common"] = 0000000000000000000;
         exchangeRate["Rare"] = 1000000000000000000;
         exchangeRate["Epic"] = 2000000000000000000;
