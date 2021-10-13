@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
-contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange {
+contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC20, AccessControlUpgradeable, Initializable {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     address public metaverseCoin;
     mapping public (string  => address) wearables;
@@ -30,6 +30,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange {
 
     function withdrawMetaverseCoin (uint256 _amount) external onlyRole(ADMIN_ROLE) returns (boolean) {
         require(IERC20(metaverseCoin).balanceOf(address(this)) >= _amount, "NFTWorldExchange#withdrawMetaverseCoin: Withdraw amount exceeds Metaverse Coin balance");
+        //Possibly need token approval here
         IERC20(metaverseCoin).transferFrom(msg.sender, address(this), _amount);
         return true;
     }
@@ -40,7 +41,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange {
     }
 
     function withdrawWearables(uint256[] _tokenIds) external onlyRole(ADMIN_ROLE) returns (boolean) {
-
+        //Possibly need token approval here
         ERC721BaseCollectionV2(wearables[_collectionName]).safeBatchTranfer(address(this), msg.sender, _tokenIds);
         return true;
 
