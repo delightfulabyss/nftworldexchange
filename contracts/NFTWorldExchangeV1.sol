@@ -11,6 +11,7 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver IERC20, AccessControlUpgradeable, Initializable {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     address public metaverseCoin;
+    mapping public (string => uint256) exchangeRate;
     mapping public (string  => address) wearables;
     uint256 public tradeback_fee;
 
