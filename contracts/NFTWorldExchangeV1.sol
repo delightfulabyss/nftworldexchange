@@ -22,6 +22,11 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver I
 
         _setupRole(ADMIN_ROLE, _admin);
         tradeback_fee = 25;
+        exchangeRate["Common"] = 0000000000000000000;
+        exchangeRate["Rare"] = 1000000000000000000;
+        exchangeRate["Epic"] = 2000000000000000000;
+        exchangeRate["Legendary"] = 3000000000000000000;
+        exchangeRate["Mythic"] = 4000000000000000000;
     }
 
     function depositMetaverseCoin (uint256 _amount) external onlyRole(ADMIN_ROLE) returns (boolean) {
