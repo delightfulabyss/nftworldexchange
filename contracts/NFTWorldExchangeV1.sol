@@ -12,6 +12,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver I
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     address public metaverseCoin;
     mapping public (string  => address) wearables;
+    uint256 public tradeback_fee;
 
     function initialize external initializer(address _metaverseCoin, address address _admin) {
 
@@ -19,6 +20,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver I
         __AccessControl_init();
 
         _setupRole(ADMIN_ROLE, _admin);
+        tradeback_fee = 25;
     }
 
     function depositMetaverseCoin (uint256 _amount) external onlyRole(ADMIN_ROLE) returns (boolean) {
