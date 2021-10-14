@@ -12,7 +12,11 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver I
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     address public metaverseCoin;
     mapping public (string => uint256) exchangeRate;
-    mapping public (string  => address) wearables;
+    struct Wearable {
+        address contractAddress,
+        uint256 availableTokens
+    }
+    mapping public (string  => Wearable) wearables;
     uint256 public tradeback_percentage;
 
     function initialize external initializer(address _metaverseCoin, address address _admin) {
@@ -47,6 +51,9 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver I
 
     function depositWearables(string _collectionName, uint256[] _tokenIds) external onlyRole(ADMIN_ROLE) returns (boolean) {
         ERC721BaseCollectionV2(wearables[_collectionName]).safeBatchTranfer(msg.sender, address(this), _tokenIds);
+        wearables[_collectionName] = {
+
+        }
         emit WearableDeposit(msg.sender, _tokenIds);
         return true;
     }
@@ -57,7 +64,10 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver I
         emit WearableWithdraw(msg.sender, _tokenIds);
         return true;
 
-    }
+    function setwearableAddress(string _collectionName, address _address) external onlyRole(ADMIN_ROLE){
+        wearables[_collectionName][contractAddress] = _address;
+        emit WearableAddressSet(_collectionName, _address);
+    };
 
     function onERC721Received(
         address,
