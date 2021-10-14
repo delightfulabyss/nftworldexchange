@@ -61,7 +61,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         ERC721BaseCollectionV2(wearables[_collectionName]).safeBatchTranfer(address(this), msg.sender, _tokenIds);
         emit WearableWithdraw(msg.sender, _collectionName, _tokenIds);
 
-    function setwearableAddress(string _collectionName, address _address) external onlyRole(ADMIN_ROLE){
+    function setWearableAddress(string _collectionName, address _address) external onlyRole(ADMIN_ROLE){
         wearables[_collectionName][contractAddress] = _address;
         emit WearableAddressSet(_collectionName, _address);
     };
