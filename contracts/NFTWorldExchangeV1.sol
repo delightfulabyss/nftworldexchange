@@ -38,7 +38,6 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         IERC20(metaverseCoin).approve(address(this), _amount);
         IERC20(metaverseCoin).transferFrom(msg.sender, address(this), _amount);
         emit MetaverseCoinDeposit(msg.sender, _amount);
-        return true;
     }
 
     function withdrawMetaverseCoin (uint256 _amount) external onlyRole(ADMIN_ROLE) returns (boolean) {
@@ -46,7 +45,6 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         //Possibly need token approval here
         IERC20(metaverseCoin).transferFrom(msg.sender, address(this), _amount);
         emit MetaverseCoinWithdraw(msg.sender, _amount);
-        return true;
     }
 
     function depositWearables(string _collectionName, uint256[] _tokenIds) external onlyRole(ADMIN_ROLE) returns (boolean) {
@@ -55,14 +53,12 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
 
         }
         emit WearableDeposit(msg.sender, _tokenIds);
-        return true;
     }
 
     function withdrawWearables(uint256[] _tokenIds) external onlyRole(ADMIN_ROLE) returns (boolean) {
         //Possibly need token approval here
         ERC721BaseCollectionV2(wearables[_collectionName]).safeBatchTranfer(address(this), msg.sender, _tokenIds);
         emit WearableWithdraw(msg.sender, _tokenIds);
-        return true;
 
     function setwearableAddress(string _collectionName, address _address) external onlyRole(ADMIN_ROLE){
         wearables[_collectionName][contractAddress] = _address;
