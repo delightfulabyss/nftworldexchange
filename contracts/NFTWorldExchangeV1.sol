@@ -27,7 +27,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         __AccessControl_init();
 
         _setupRole(ADMIN_ROLE, _admin);
-        tradeback_percentage = 25;
+        tradeback_percentage = 250000000000000000;
         exchangeRate["Common"] = 0000000000000000000;
         exchangeRate["Rare"] = 1000000000000000000;
         exchangeRate["Epic"] = 2000000000000000000;
@@ -82,8 +82,11 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
     }
 
     function returnWearable(string _collectionName, uint256 _tokenId) {
-        require(wearables[IERC721())
+        require(wearables[_collectionName] != 0, "NFTWorldExchange#returnWearable: Not valid collection name")
+        wearables[_collectionName][availableTokens] += _tokenIds.length;
         IERC721(wearables[_collectionName][contractAddress]).safeTranferFrom(msg.sender, address(this), _tokenId);
+        uint256 memory amount = exchangeRate[wearables[_collectionName][rarity]] * 
+
     }
 
     function onERC721Received(
