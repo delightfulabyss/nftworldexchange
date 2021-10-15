@@ -51,7 +51,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
 
     function depositWearables(string _collectionName, uint256[] _tokenIds) external onlyRole(ADMIN_ROLE) returns (boolean) {
         wearables[_collectionName][availableTokens] += _tokenIds.length;
-        ERC721BaseCollectionV2(wearables[_collectionName]).safeBatchTranfer(msg.sender, address(this), _tokenIds);
+        ERC721BaseCollectionV2(wearables[_collectionName][contractAddress]).safeBatchTranfer(msg.sender, address(this), _tokenIds);
         }
         emit WearableDeposit(msg.sender, _collectionName, _tokenIds);
     }
@@ -60,7 +60,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         //Possibly need token approval here
         require(wearables[_collectionName][availableTokens] >= _tokenIds.length, "NFTWorldExchange#withdrawWearables: Available tokens does not match number provided");
         wearables[_collectionName][availableTokens] -= _tokenIds.length;
-        ERC721BaseCollectionV2(wearables[_collectionName]).safeBatchTranfer(address(this), msg.sender, _tokenIds);
+        ERC721BaseCollectionV2(wearables[_collectionName][contractAddress]).safeBatchTranfer(address(this), msg.sender, _tokenIds);
         emit WearableWithdraw(msg.sender, _collectionName, _tokenIds);
 
     function setWearableAddress(string _collectionName, address _address) external onlyRole(ADMIN_ROLE){
@@ -78,11 +78,12 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         IERC20(metaverseCoin).approve(address(this), amount);
         IERC20(metaverseCoin).transferFrom(msg.sender, address(this), amount);
         //Transfer token to user
-        IERC721(wearables[_collectionName]).safeTranferFrom(address(this), msg.sender, _tokenId);
+        IERC721(wearables[_collectionName][contractAddress]).safeTranferFrom(address(this), msg.sender, _tokenId);
     }
 
     function returnWearable(string _collectionName, uint256 _tokenId) {
-
+        require(wearables[IERC721())
+        IERC721(wearables[_collectionName][contractAddress]).safeTranferFrom(msg.sender, address(this), _tokenId);
     }
 
     function onERC721Received(

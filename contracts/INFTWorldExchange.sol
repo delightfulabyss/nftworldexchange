@@ -11,11 +11,17 @@ interface INFTWorldExchange {
 
     function withdrawWearables(string _collectionName, uint256[] _tokenIds) external returns (boolean);
 
+    function getWearable(string _collectionName, uint256 _tokenId);
+
+    function returnWearable(string _collectionName, uint256 _tokenId);
+
     function setWearableAddress(string _collectionName, address _address) external;
 
     event MetaverseCoinDeposit(address indexed from, uint256 indexed value);
     event MetaverseCoinWithdraw(address indexed to, uint256 indexed value);
     event WearableDeposit(address indexed from, string indexed collectionName, uint256[] indexed tokenIds);
     event WearableWithdraw(address indexed to, string indexed collectionName, uint256[] indexed tokenIds);
+    event WearableExchange(address indexed to, string indexed collectionName, uint256 indexed tokenId, uint256 indexed amount);
+    event WearableReturn(address indexed to, string indexed collectionName, uint256 indexed tokenId, uint256 indexed amount);
     event WearableAddressSet(string collectionName, address _address);
 }
