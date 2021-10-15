@@ -4,6 +4,7 @@ pragma solidity >=0.8.4;
 import "./INFTWorldExchange.sol";
 import "./ERC721BaseCollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol;";
+import "@openzeeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
@@ -15,6 +16,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
     struct Wearable {
         address contractAddress,
         uint256 availableTokens
+        string rarity
     }
     mapping public (string  => Wearable) wearables;
     uint256 public tradeback_percentage;
@@ -65,6 +67,23 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         wearables[_collectionName][contractAddress] = _address;
         emit WearableAddressSet(_collectionName, _address);
     };
+
+    function getWearable(string _collectionName, uint256 _tokenId) {
+        uint256 memory amount = exchangeRate[wearables[_collectionName][rarity]];
+        //Check if token is owned by exchange contract
+        require(IERC721(wearables[_collectionName]).ownerOf(_tokenId) === address(this), "NFTWorldExchange#getWearable: Token is not available"
+        //Calculate the amount owed and make sure the user has that balance
+        require(IERC20(metaverseCoin).balanceOf(msg.sender) >= amount, "NFTWorldExchange#getWearable: Exchange rate exceeds Metaverse Coin balance")
+        //Transfer metaverse coin to exchange contract
+        IERC20(metaverseCoin).approve(address(this), amount);
+        IERC20(metaverseCoin).transferFrom(msg.sender, address(this), amount);
+        //Transfer token to user
+        IERC721(wearables[_collectionName]).safeTranferFrom(address(this), msg.sender, _tokenId);
+    }
+
+    function returnWearable(string _collectionName, uint256 _tokenId) {
+
+    }
 
     function onERC721Received(
         address,
