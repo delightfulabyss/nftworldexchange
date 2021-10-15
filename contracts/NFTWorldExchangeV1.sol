@@ -79,14 +79,16 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         IERC20(metaverseCoin).transferFrom(msg.sender, address(this), amount);
         //Transfer token to user
         IERC721(wearables[_collectionName][contractAddress]).safeTranferFrom(address(this), msg.sender, _tokenId);
+        emit WearableExchanged(msg.sender, _collectionName, _tokenId, amount);
     }
 
     function returnWearable(string _collectionName, uint256 _tokenId) {
         require(wearables[_collectionName] != 0, "NFTWorldExchange#returnWearable: Not valid collection name")
         wearables[_collectionName][availableTokens] += _tokenIds.length;
         IERC721(wearables[_collectionName][contractAddress]).safeTranferFrom(msg.sender, address(this), _tokenId);
-        uint256 memory amount = exchangeRate[wearables[_collectionName][rarity]] * 
-
+        uint256 memory adjustedAmount = exchangeRate[wearables[_collectionName][rarity]] / tradeback_percentage;
+        IERC20(metaverseCoin).transferFrom(address(this), msg.sender, adjustedAmount);
+        emit WearableReturned(msg.sender, _collectionName, _tokenId, adjustedAmount);
     }
 
     function onERC721Received(
