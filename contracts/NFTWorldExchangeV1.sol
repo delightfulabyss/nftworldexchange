@@ -99,4 +99,5 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
     ) public virtual override returns (bytes4) {
         return this.onERC721Received.selector;
     }
+    
 }
