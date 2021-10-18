@@ -68,7 +68,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
     }
 
     function getWearable(string memory _collectionName, uint256 _tokenId) external {
-        uint256 memory amount = exchangeRate[wearables[_collectionName].rarity];
+        uint256 amount = exchangeRate[wearables[_collectionName].rarity];
         //Check if token is owned by exchange contract
         require(IERC721(wearables[_collectionName]).ownerOf(_tokenId) == address(this), "NFTWorldExchange#getWearable: Token is not available");
         //Calculate the amount owed and make sure the user has that balance
@@ -86,7 +86,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         require(wearables[_collectionName] != 0, "NFTWorldExchange#returnWearable: Not valid collection name");
         wearables[_collectionName].availableTokens++;
         IERC721(wearables[_collectionName].contractAddress).safeTranferFrom(msg.sender, address(this), _tokenId);
-        uint256 memory adjustedAmount = exchangeRate[wearables[_collectionName].rarity] / base_fee;
+        uint256 adjustedAmount = exchangeRate[wearables[_collectionName].rarity] / base_fee;
         IERC20(metaverseCoin).transferFrom(address(this), msg.sender, adjustedAmount);
         emit WearableReturned(msg.sender, _collectionName, _tokenId, adjustedAmount);
     }
