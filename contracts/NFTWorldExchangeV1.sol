@@ -48,13 +48,13 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         emit MetaverseCoinWithdraw(msg.sender, _amount);
     }
 
-    function depositWearables(string memory _collectionName, uint256[] _tokenIds) external onlyRole(ADMIN_ROLE) {
+    function depositWearables(string memory _collectionName, uint256[] memory _tokenIds) external onlyRole(ADMIN_ROLE) {
         wearables[_collectionName].availableTokens += _tokenIds.length;
         ERC721BaseCollectionV2(wearables[_collectionName].contractAddress).safeBatchTranfer(msg.sender, address(this), _tokenIds);
         emit WearableDeposit(msg.sender, _collectionName, _tokenIds);
     }
 
-    function withdrawWearables(string memory _collectionName, uint256[] _tokenIds) external onlyRole(ADMIN_ROLE) {
+    function withdrawWearables(string memory _collectionName, uint256[] memory _tokenIds) external onlyRole(ADMIN_ROLE) {
         //Possibly need token approval here
         require(wearables[_collectionName].availableTokens >= _tokenIds.length, "NFTWorldExchange#withdrawWearables: Available tokens does not match number provided");
         wearables[_collectionName].availableTokens -= _tokenIds.length;
