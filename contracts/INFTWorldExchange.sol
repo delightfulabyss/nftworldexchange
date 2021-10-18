@@ -3,17 +3,17 @@ pragma solidity >=0.8.4;
 
 interface INFTWorldExchange {
 
-    function depositMetaverseCoin (uint256 _amount) external returns (boolean);
+    function depositMetaverseCoin (uint256 _amount) external;
 
-    function withdrawMetaverseCoin (uint256 _amount) external returns (boolean);
+    function withdrawMetaverseCoin (uint256 _amount) external;
 
-    function depositWearables(string _collectionName, uint256[] _tokenIds) external returns (boolean);
+    function depositWearables(string _collectionName, uint256[] _tokenIds) external;
 
-    function withdrawWearables(string _collectionName, uint256[] _tokenIds) external returns (boolean);
+    function withdrawWearables(string _collectionName, uint256[] _tokenIds) external;
 
-    function getWearable(string _collectionName, uint256 _tokenId);
+    function getWearable(string _collectionName, uint256 _tokenId) external;
 
-    function returnWearable(string _collectionName, uint256 _tokenId);
+    function returnWearable(string _collectionName, uint256 _tokenId) external;
 
     function setWearableAddress(string _collectionName, address _address) external;
 
