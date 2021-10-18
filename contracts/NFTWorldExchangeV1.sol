@@ -4,7 +4,7 @@ pragma solidity >=0.8.4;
 import "./INFTWorldExchange.sol";
 import "./ERC721BaseCollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol;";
-import "@openzeeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
