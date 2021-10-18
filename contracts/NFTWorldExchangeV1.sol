@@ -50,7 +50,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
 
     function depositWearables(string memory _collectionName, uint256[] memory _tokenIds) virtual override external onlyRole(ADMIN_ROLE) {
         wearables[_collectionName].availableTokens += _tokenIds.length;
-        ERC721BaseCollectionV2(wearables[_collectionName].contractAddress).safeBatchTranferFrom(msg.sender, address(this), _tokenIds);
+        ERC721BaseCollectionV2(wearables[_collectionName].contractAddress).safeBatchTranferFrom(msg.sender, address(this), _tokenIds, "";
         emit WearableDeposit(msg.sender, _collectionName, _tokenIds);
     }
 
