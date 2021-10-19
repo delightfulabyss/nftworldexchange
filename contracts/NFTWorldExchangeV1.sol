@@ -2,6 +2,7 @@
 pragma solidity >=0.7.6;
 
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./INFTWorldExchange.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -9,6 +10,7 @@ import "wearables-contracts/contracts/interfaces/IERC721CollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, AccessControlUpgradeable {
+    using SafeMath for uint256;
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     address public metaverseCoinAddress;
     mapping (string => uint256) public exchangeRates;
@@ -65,7 +67,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         IERC721 BaseERC721 = IERC721(collectionAddress);
         //Possibly need token approval here
         require(numberTokensAvailable[_collectionName] >= _tokenIds.length, "NFTWorldExchange#withdrawWearables: Available tokens does not match number provided");
-        numberTokensAvailable[_collectionName] -= _tokenIds.length;
+        numberTokensAvailable[_collectionName] =  numberTokensAvailable[_collectionName].add(_tokenIds.length);
         for (uint256 i = 0; i < _tokenIds.length; i++) {
             BaseERC721.safeTransferFrom(address(this), _msgSender(), _tokenIds[i]);
         }
@@ -95,7 +97,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         require(BaseERC721.ownerOf(_tokenId) == address(this), "NFTWorldExchange#getWearable: Token is not available");
         //Calculate the amount owed and make sure the user has that balance
         require(MetaverseCoin.balanceOf(_msgSender()) >= amount, "NFTWorldExchange#getWearable: Exchange rate exceeds Metaverse Coin balance");
-        numberTokensAvailable[_collectionName]--;
+        numberTokensAvailable[_collectionName] = numberTokensAvailable[_collectionName].sub(1);
         //Transfer metaverse coin to exchange contract
         MetaverseCoin.approve(address(this), amount);
         MetaverseCoin.transferFrom(_msgSender(), address(this), amount);
@@ -113,7 +115,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         numberTokensAvailable[_collectionName]++;
         BaseERC721.safeTransferFrom(_msgSender(), address(this), _tokenId);
         string memory rarity = WearablesCollection.items(_itemId).rarity;
-        uint256 adjustedAmount = exchangeRate[rarity] -  (exchangeRate[rarity] / base_fee);
+        uint256 adjustedAmount = exchangeRate[rarity].sub(exchangeRate[rarity].div(base_fee));
         MetaverseCoin.transferFrom(address(this), _msgSender(), adjustedAmount);
         emit WearableReturned(_msgSender(), _collectionName, _tokenId, adjustedAmount);
     }
