@@ -60,7 +60,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         require(wearables[_collectionName].availableTokens >= _tokenIds.length, "NFTWorldExchange#withdrawWearables: Available tokens does not match number provided");
         wearables[_collectionName].availableTokens -= _tokenIds.length;
         for (uint256 i = 0; i < _tokenIds.length; i++) {
-            IERC721(wearables[_collectionName].contractAddress).safeTransferFrom(address(this) msg.sender, _tokenIds[i], "");
+            IERC721(wearables[_collectionName].contractAddress).safeTransferFrom(address(this), msg.sender, _tokenIds[i], "");
         }
         emit WearableWithdraw(msg.sender, _collectionName, _tokenIds);
     }
