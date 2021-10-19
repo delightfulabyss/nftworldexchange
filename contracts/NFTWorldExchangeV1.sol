@@ -47,7 +47,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         emit MetaverseCoinWithdraw(msg.sender, _amount);
     }
 
-    function depositWearables(string memory _collectionName, uint256[] memory _tokenIds, bytes _data) virtual override external onlyRole(ADMIN_ROLE) {
+    function depositWearables(string memory _collectionName, uint256[] memory _tokenIds, bytes memory _data) virtual override external onlyRole(ADMIN_ROLE) {
         wearables[_collectionName].availableTokens += _tokenIds.length;
         for (uint256 i = 0; i < _tokenIds.length; i++) {
             IERC721(wearables[_collectionName].contractAddress).safeTransferFrom(msg.sender, address(this), _tokenIds[i], _data);
@@ -55,12 +55,12 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         emit WearableDeposit(msg.sender, _collectionName, _tokenIds);
     }
 
-    function withdrawWearables(string memory _collectionName, uint256[] memory _tokenIds) virtual override external onlyRole(ADMIN_ROLE) {
+    function withdrawWearables(string memory _collectionName, uint256[] memory _tokenIds, bytes memory _data) virtual override external onlyRole(ADMIN_ROLE) {
         //Possibly need token approval here
         require(wearables[_collectionName].availableTokens >= _tokenIds.length, "NFTWorldExchange#withdrawWearables: Available tokens does not match number provided");
         wearables[_collectionName].availableTokens -= _tokenIds.length;
         for (uint256 i = 0; i < _tokenIds.length; i++) {
-            IERC721(wearables[_collectionName].contractAddress).safeTransferFrom(address(this), msg.sender, _tokenIds[i], "");
+            IERC721(wearables[_collectionName].contractAddress).safeTransferFrom(address(this), msg.sender, _tokenIds[i], _data);
         }
         emit WearableWithdraw(msg.sender, _collectionName, _tokenIds);
     }
