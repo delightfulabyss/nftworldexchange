@@ -3,7 +3,6 @@ pragma solidity >=0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "./INFTWorldExchange.sol";
-import "./IERC721BaseCollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -50,7 +49,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
 
     function depositWearables(string memory _collectionName, uint256[] memory _tokenIds) virtual override external onlyRole(ADMIN_ROLE) {
         wearables[_collectionName].availableTokens += _tokenIds.length;
-        IERC721BaseCollectionV2(wearables[_collectionName].contractAddress).safeBatchTranferFrom(msg.sender, address(this), _tokenIds, "");
+        
         emit WearableDeposit(msg.sender, _collectionName, _tokenIds);
     }
 
@@ -58,7 +57,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         //Possibly need token approval here
         require(wearables[_collectionName].availableTokens >= _tokenIds.length, "NFTWorldExchange#withdrawWearables: Available tokens does not match number provided");
         wearables[_collectionName].availableTokens -= _tokenIds.length;
-        IERC721BaseCollectionV2(wearables[_collectionName].contractAddress).safeBatchTranferFrom(address(this), msg.sender, _tokenIds, "");
+        
         emit WearableWithdraw(msg.sender, _collectionName, _tokenIds);
     }
 
