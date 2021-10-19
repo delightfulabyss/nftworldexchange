@@ -7,13 +7,13 @@ interface INFTWorldExchange {
 
     function withdrawMetaverseCoin (uint256 _amount) external;
 
-    function depositWearables(string memory _collectionName, uint256[] memory _tokenIds, bytes calldata _data) external;
+    function depositWearables(string memory _collectionName, uint256[] memory _tokenIds) external;
 
-    function withdrawWearables(string memory _collectionName, uint256[] memory _tokenIds, bytes calldata _data) external;
+    function withdrawWearables(string memory _collectionName, uint256[] memory _tokenIds) external;
 
-    function getWearable(string memory _collectionName, uint256 _tokenId, bytes calldata _data) external;
+    function getWearable(string memory _collectionName, uint256 _tokenId) external;
 
-    function returnWearable(string memory _collectionName, uint256 _tokenId, bytes calldata _data) external;
+    function returnWearable(string memory _collectionName, uint256 _tokenId) external;
 
     function setWearableAddress(string memory _collectionName, address _address) external;
 
