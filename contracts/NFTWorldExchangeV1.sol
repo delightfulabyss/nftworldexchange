@@ -49,22 +49,24 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         emit MetaverseCoinWithdraw(msg.sender, _amount);
     }
 
-    function depositWearables(string memory _collectionName, uint256[] memory _tokenIds, bytes calldata _data) virtual override external onlyRole(ADMIN_ROLE) {
-        IERC721 WearablesCollection = IERC721(wearables[_collectionName].contractAddress);
+    function depositWearables(string memory _collectionName, uint256[] memory _tokenIds) virtual override external onlyRole(ADMIN_ROLE) {
+        address collectionAddress = wearables[_collectionName].contractAddress;
+        IERC721 WearablesCollection = IERC721(collectionAddress);
         wearables[_collectionName].availableTokens += _tokenIds.length;
         for (uint256 i = 0; i < _tokenIds.length; i++) {
-            WearablesCollection.safeTransferFrom(msg.sender, address(this), _tokenIds[i], _data);
+            WearablesCollection.safeTransferFrom(msg.sender, address(this), _tokenIds[i]);
         }
         emit WearableDeposit(msg.sender, _collectionName, _tokenIds);
     }
 
-    function withdrawWearables(string memory _collectionName, uint256[] memory _tokenIds, bytes calldata _data) virtual override external onlyRole(ADMIN_ROLE) {
-        IERC721 WearablesCollection = IERC721(wearables[_collectionName].contractAddress);
+    function withdrawWearables(string memory _collectionName, uint256[] memory _tokenIds) virtual override external onlyRole(ADMIN_ROLE) {
+        address collectionAddress = wearables[_collectionName].contractAddress;
+        IERC721 WearablesCollection = IERC721(collectionAddress);
         //Possibly need token approval here
         require(wearables[_collectionName].availableTokens >= _tokenIds.length, "NFTWorldExchange#withdrawWearables: Available tokens does not match number provided");
         wearables[_collectionName].availableTokens -= _tokenIds.length;
         for (uint256 i = 0; i < _tokenIds.length; i++) {
-            WearablesCollection.safeTransferFrom(address(this), msg.sender, _tokenIds[i], _data);
+            WearablesCollection.safeTransferFrom(address(this), msg.sender, _tokenIds[i]);
         }
         emit WearableWithdraw(msg.sender, _collectionName, _tokenIds);
     }
@@ -75,7 +77,8 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
     }
 
     function getWearable(string memory _collectionName, uint256 _tokenId) virtual override external {
-        IERC721 WearablesCollection = IERC721(wearables[_collectionName].contractAddress);
+        address collectionAddress = wearables[_collectionName].contractAddress;
+        IERC721 WearablesCollection = IERC721(collectionAddress);
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         uint256 amount = exchangeRate[wearables[_collectionName].rarity];
         //Check if token is owned by exchange contract
@@ -87,16 +90,17 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         MetaverseCoin.approve(address(this), amount);
         MetaverseCoin.transferFrom(msg.sender, address(this), amount);
         //Transfer token to user
-        WearablesCollection.safeTranferFrom(address(this), msg.sender, _tokenId, "");
+        WearablesCollection.safeTranferFrom(address(this), msg.sender, _tokenId);
         emit WearableExchanged(msg.sender, _collectionName, _tokenId, amount);
     }
 
     function returnWearable(string memory _collectionName, uint256 _tokenId) virtual override external {
-        IERC721 WearablesCollection = IERC721(wearables[_collectionName].contractAddress);
+        address collectionAddress = wearables[_collectionName].contractAddress;
+        IERC721 WearablesCollection = IERC721(collectionAddress);
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         require(wearables[_collectionName] != 0, "NFTWorldExchange#returnWearable: Not valid collection name");
         wearables[_collectionName].availableTokens++;
-        WearablesCollection.safeTranferFrom(msg.sender, address(this), _tokenId, "");
+        WearablesCollection.safeTransferFrom(msg.sender, address(this), _tokenId);
         uint256 adjustedAmount = exchangeRate[wearables[_collectionName].rarity] / base_fee;
         MetaverseCoin.transferFrom(address(this), msg.sender, adjustedAmount);
         emit WearableReturned(msg.sender, _collectionName, _tokenId, adjustedAmount);
