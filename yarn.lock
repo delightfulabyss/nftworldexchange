@@ -9484,6 +9484,11 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
+wearables-contracts@^1.30.0:
+  version "1.30.0"
+  resolved "https://registry.yarnpkg.com/wearables-contracts/-/wearables-contracts-1.30.0.tgz#019dc1770ef8b18b477741456ae9c45a408953a7"
+  integrity sha512-IiGGuso0l212ic4iKP2gNG/XGlPUaWnuPRBr0lR21aAD0LERsOxaHFlab4p9WiUiqxXFK/h4uvcqF995QlmDFg==
+
 web3-bzz@1.2.11:
   version "1.2.11"
   resolved "https://registry.yarnpkg.com/web3-bzz/-/web3-bzz-1.2.11.tgz#41bc19a77444bd5365744596d778b811880f707f"
