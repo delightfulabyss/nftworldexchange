@@ -31,12 +31,12 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         for (uint256 i = 0; i < _collections.length; i++) {
             _addCollectionSupport(_collections[i]);
         }
+
     }
 
     function depositMetaverseCoin (uint256 _amount) virtual override external onlyRole(ADMIN_ROLE) {
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         require(MetaverseCoin.balanceOf(_msgSender()) >= _amount, "NFTWorldExchange#depositMetaverseCoin: Deposit amount exceeds Metaverse Coin balance");
-        MetaverseCoin.approve(address(this), _amount);
         MetaverseCoin.transferFrom(_msgSender(), address(this), _amount);
         emit MetaverseCoinDeposit(_msgSender(), _amount);
     }
@@ -45,7 +45,8 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         require(MetaverseCoin.balanceOf(address(this)) >= _amount, "NFTWorldExchange#withdrawMetaverseCoin: Withdraw amount exceeds Metaverse Coin balance");
         //Possibly need token approval here
-        MetaverseCoin.transferFrom(_msgSender(), address(this), _amount);
+        MetaverseCoin.approve(_msgSender(), _amount);
+        MetaverseCoin.transferFrom(address(this), _msgSender(), _amount);
         emit MetaverseCoinWithdraw(_msgSender(), _amount);
     }
 
@@ -66,6 +67,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         require(numberTokensAvailable[_collectionName] >= _tokenIds.length, "NFTWorldExchange#withdrawWearables: Available tokens does not match number provided");
         numberTokensAvailable[_collectionName] -= _tokenIds.length;
         for (uint256 i = 0; i < _tokenIds.length; i++) {
+            BaseERC721.approve(_msgSender(), _tokenIds[i]);
             BaseERC721.safeTransferFrom(address(this), _msgSender(), _tokenIds[i]);
         }
         emit WearableWithdraw(_msgSender(), _collectionName, _tokenIds);
