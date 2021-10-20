@@ -13,7 +13,7 @@ interface INFTWorldExchange {
 
     function getWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) external;
 
-    function returnWearable(string memory _collectionName, uint256 _tokenId) external;
+    function returnWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) external;
 
     function addCollectionSupport(address _address) external;
 
