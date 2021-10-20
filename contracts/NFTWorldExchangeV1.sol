@@ -99,7 +99,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         MetaverseCoin.approve(address(this), amount);
         MetaverseCoin.transferFrom(_msgSender(), address(this), amount);
         //Transfer token to user
-        BaseERC721.safeTranferFrom(address(this), _msgSender(), _tokenId);
+        BaseERC721.safeTransferFrom(address(this), _msgSender(), _tokenId);
         emit WearableExchanged(_msgSender(), _collectionName, _tokenId, amount);
     }
 
