@@ -97,7 +97,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         //Calculate the amount owed and make sure the user has that balance
         require(MetaverseCoin.balanceOf(_msgSender()) >= amount, "NFTWorldExchange#getWearable: Exchange rate exceeds Metaverse Coin balance");
         numberTokensAvailable[_collectionName] --;
-        if (rarity != 'Common'){
+        if (amount != 0){
             //Transfer metaverse coin to exchange contract
             MetaverseCoin.approve(address(this), amount);
             MetaverseCoin.transferFrom(_msgSender(), address(this), amount);
@@ -120,8 +120,9 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         numberTokensAvailable[_collectionName]++;
         BaseERC721.safeTransferFrom(_msgSender(), address(this), _tokenId);
         (string memory rarity, , , , , , ) = WearablesCollection.items(_itemId);
-        if (rarity != 'Common'){
-            uint256 adjustedAmount =  exchangeRates[rarity] - (exchangeRates[rarity] / base_fee );
+        uint256 amount = exchangeRates[rarity];
+        if (amount != 0){
+            uint256 adjustedAmount =  amount - (amount / base_fee );
             MetaverseCoin.transferFrom(address(this), _msgSender(), adjustedAmount);
             emit WearableReturned(_msgSender(), _collectionName, _tokenId, adjustedAmount);
         } else {
