@@ -9,13 +9,12 @@ import "./IERC721CollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, AccessControlUpgradeable {
-    using SafeMath for uint256;
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     address public metaverseCoinAddress;
     mapping (string => uint256) public exchangeRates;
     mapping (address => string) public tokenRarities;
     mapping (string  => address) public wearableContracts;
-    mapping (string => uint256) public numberTokenAvailable
+    mapping (string => uint256) public numberTokenAvailable;
     uint256 public base_fee;
 
     function initialize (address _metaverseCoin, address _admin, address[] memory _collections) external initializer() {

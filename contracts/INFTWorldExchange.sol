@@ -11,7 +11,7 @@ interface INFTWorldExchange {
 
     function withdrawWearables(string memory _collectionName, uint256[] memory _tokenIds) external;
 
-    function getWearable(string memory _collectionName, uint256 _itemId uint256 _tokenId) external;
+    function getWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) external;
 
     function returnWearable(string memory _collectionName, uint256 _tokenId) external;
 
