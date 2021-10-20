@@ -51,7 +51,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
 
     function depositWearables(string memory _collectionName, uint256[] memory _tokenIds) virtual override external onlyRole(ADMIN_ROLE) {
         address collectionAddress = wearableContracts[_collectionName];
-        IERC721Metadata BaseERC721 = IERC721Metadata(collectionAddress);
+        IERC721 BaseERC721 = IERC721(collectionAddress);
         numberTokensAvailable[_collectionName] += _tokenIds.length;
         for (uint256 i = 0; i < _tokenIds.length; i++) {
             BaseERC721.safeTransferFrom(_msgSender(), address(this), _tokenIds[i]);
@@ -61,7 +61,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
 
     function withdrawWearables(string memory _collectionName, uint256[] memory _tokenIds) virtual override external onlyRole(ADMIN_ROLE) {
         address collectionAddress = wearableContracts[_collectionName];
-        IERC721Metadata BaseERC721 = IERC721Metadata(collectionAddress);
+        IERC721 BaseERC721 = IERC721(collectionAddress);
         //Possibly need token approval here
         require(numberTokensAvailable[_collectionName] >= _tokenIds.length, "NFTWorldExchange#withdrawWearables: Available tokens does not match number provided");
         numberTokensAvailable[_collectionName] -= _tokenIds.length;
@@ -76,8 +76,8 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
     }
 
     function _addCollectionSupport(address _address) internal {
-        IERC721Metadata BaseERC721 = IERC721Metadata(_address);
-        string memory collectionName = BaseERC721.name();
+        IERC721Metadata ERC721Metadata = IERC721Metadata(_address);
+        string memory collectionName = ERC721Metadata.name();
         wearableContracts[collectionName] = _address;
 
         emit CollectionSupportAdded(collectionName, _address);
@@ -85,7 +85,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
 
     function getWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) virtual override external {
         address collectionAddress = wearableContracts[_collectionName];
-        IERC721Metadata BaseERC721 = IERC721Metadata(collectionAddress);
+        IERC721 BaseERC721 = IERC721(collectionAddress);
         IERC721CollectionV2 WearablesCollection = IERC721CollectionV2(collectionAddress);
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         (string memory rarity, , , , , , ) = WearablesCollection.items(_itemId);
@@ -105,7 +105,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
 
     function returnWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) virtual override external {
         address collectionAddress = wearableContracts[_collectionName];
-        IERC721Metadata BaseERC721 = IERC721Metadata(collectionAddress);
+        IERC721 BaseERC721 = IERC721(collectionAddress);
         IERC721CollectionV2 WearablesCollection = IERC721CollectionV2(collectionAddress);
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         require(wearableContracts[_collectionName] != 0, "NFTWorldExchange#returnWearable: Not valid collection name");
