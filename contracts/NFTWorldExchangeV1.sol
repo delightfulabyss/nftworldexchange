@@ -108,7 +108,7 @@ contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, 
         IERC721 BaseERC721 = IERC721(collectionAddress);
         IERC721CollectionV2 WearablesCollection = IERC721CollectionV2(collectionAddress);
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
-        require(wearableContracts[_collectionName] != 0, "NFTWorldExchange#returnWearable: Not valid collection name");
+        require(wearableContracts[_collectionName] != address(0x0), "NFTWorldExchange#returnWearable: Not valid collection name");
         numberTokensAvailable[_collectionName]++;
         BaseERC721.safeTransferFrom(_msgSender(), address(this), _tokenId);
         (string memory rarity, , , , , , ) = WearablesCollection.items(_itemId);
