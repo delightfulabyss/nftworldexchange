@@ -36,7 +36,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
 
     function depositMetaverseCoin (uint256 _amount) virtual override external onlyRole(ADMIN_ROLE) {
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
-        require(MetaverseCoin.balanceOf(_msgSender()) >= _amount, "NFTWorldExchange#depositMetaverseCoin: Deposit amount exceeds Metaverse Coin balance");
+        require(MetaverseCoin.balanceOf(_msgSender()) >= _amount, "NFTWorldExchange#depositMetaverseCoin: Deposit amount exceeds token balance");
         require(MetaverseCoin.allowance(_msgSender(), address(this)), "NFTWorldExchange#depositMetaverseCoin: Check token allowance");
         MetaverseCoin.transferFrom(_msgSender(), address(this), _amount);
         emit MetaverseCoinDeposit(_msgSender(), _amount);
@@ -44,7 +44,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
 
     function withdrawMetaverseCoin (uint256 _amount) virtual override external onlyRole(ADMIN_ROLE) {
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
-        require(MetaverseCoin.balanceOf(address(this)) >= _amount, "NFTWorldExchange#withdrawMetaverseCoin: Withdraw amount exceeds Metaverse Coin balance");
+        require(MetaverseCoin.balanceOf(address(this)) >= _amount, "NFTWorldExchange#withdrawMetaverseCoin: Withdraw amount exceeds token balance");
         //Possibly need token approval here
         MetaverseCoin.approve(_msgSender(), _amount);
         MetaverseCoin.transferFrom(address(this), _msgSender(), _amount);
