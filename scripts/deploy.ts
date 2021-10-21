@@ -12,7 +12,7 @@ async function main() {
   });
 
   const NFTWorldExchange = await ethers.getContractFactory(
-    "NFTWorldExchangeImplmentationV1"
+    "NFTWorldExchangeImplementationV1"
   );
 
   const NFTWorldExchangeProxy = await upgrades.deployProxy(NFTWorldExchange, [
