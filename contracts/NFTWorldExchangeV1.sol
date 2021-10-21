@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "./IERC721CollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract NFTWorldExchangeImplmentationV1 is INFTWorldExchange, IERC721Receiver, AccessControlUpgradeable {
+contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver, AccessControlUpgradeable {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     address public metaverseCoinAddress;
     mapping (string => uint256) public exchangeRates;
