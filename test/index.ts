@@ -1,9 +1,22 @@
-import { expect } from "chai";
-import { ethers } from "hardhat";
+import chai, { expect } from "chai";
+import hre, { ethers } from "hardhat";
+import { solidity } from "ethereum-waffle";
 
-describe("NFTWorldExchange", function () {
+chai.use(solidity);
+
+describe("NFTWorldExchange", async function () {
   // Metaverse Coin
   //  Doug's address should be able to deposit Metaverse Coin
+  it("Should allow owner address to deposit Metaverse Coin", async function () {
+    await hre.network.provider.request({
+      method: "hardhat_impersonateAccount",
+      params: ["0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"],
+    });
+    const signer = await ethers.getSigner(
+      "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"
+    );
+    
+  });
   //  Another address should not be able to deposit Metaverse Coin
   //
   // Wearables
@@ -13,18 +26,6 @@ describe("NFTWorldExchange", function () {
   //  A user should not receive a wearable of a certain rarity if they don't have enough Metaverse Coin
   //  A user should receive a payout of 75% of what they paid in exchange for sending a purchased wearable back to the contract
   //  A user should not be able to send a wearable not originally deposited by Doug to the contract
-  it("Should return the new greeting once it's changed", async function () {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-    await greeter.deployed();
-
-    expect(await greeter.greet()).to.equal("Hello, world!");
-
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
-
-    // wait until the transaction is mined
-    await setGreetingTx.wait();
-
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
-  });
+  it("Should allow owner address to deposit Metaverse Coin", async function () {});
+  it("Should not allow a user's address to deposit Metaverse Coin", async function () {});
 });
