@@ -3,16 +3,23 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-import hre, { ethers, upgrades } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 
 async function main() {
-  await hre.network.provider.request({
-    method: "hardhat_impersonateAccount",
-    params: ["0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"],
-  });
+  const provider = new ethers.providers.JsonRpcProvider(
+    "http://127.0.0.1:8545"
+  );
+  await provider.send("hardhat_impersonateAccount", [
+    "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
+  ]);
+
+  const signer = await provider.getSigner(
+    "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"
+  );
 
   const NFTWorldExchange = await ethers.getContractFactory(
-    "NFTWorldExchangeImplementationV1"
+    "NFTWorldExchangeImplementationV1",
+    signer
   );
 
   const NFTWorldExchangeProxy = await upgrades.deployProxy(NFTWorldExchange, [

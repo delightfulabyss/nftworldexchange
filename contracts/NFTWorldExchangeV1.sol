@@ -37,6 +37,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
     function depositMetaverseCoin (uint256 _amount) virtual override external onlyRole(ADMIN_ROLE) {
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         require(MetaverseCoin.balanceOf(_msgSender()) >= _amount, "NFTWorldExchange#depositMetaverseCoin: Deposit amount exceeds Metaverse Coin balance");
+        MetaverseCoin.approve(address(this), _amount);
         MetaverseCoin.transferFrom(_msgSender(), address(this), _amount);
         emit MetaverseCoinDeposit(_msgSender(), _amount);
     }
