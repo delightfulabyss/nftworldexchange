@@ -44,7 +44,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
     function withdrawMetaverseCoin (uint256 _amount) virtual override external onlyRole(ADMIN_ROLE) {
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         require(MetaverseCoin.balanceOf(address(this)) >= _amount, "NFTWorldExchange#withdrawMetaverseCoin: Insufficient balance for withdraw");
-        //Possibly need token approval here
+        MetaverseCoin.approve(_msgSender(), _amount);
         MetaverseCoin.transferFrom(address(this), _msgSender(), _amount);
         emit MetaverseCoinWithdraw(_msgSender(), _amount);
     }
