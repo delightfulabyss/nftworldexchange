@@ -3,7 +3,6 @@ import { ethers, upgrades } from "hardhat";
 import { solidity } from "ethereum-waffle";
 import { Contract } from "ethers";
 
-
 chai.use(solidity);
 
 describe("NFTWorldExchange", async function () {
@@ -44,4 +43,7 @@ describe("NFTWorldExchange", async function () {
   //  A user should not receive a wearable of a certain rarity if they don't have enough Metaverse Coin
   //  A user should receive a payout of 75% of what they paid in exchange for sending a purchased wearable back to the contract
   //  A user should not be able to send a wearable not originally deposited by Doug to the contract
+  //
+  // Upgrades
+  // Proxy should be able to be upgraded
 });
