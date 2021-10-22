@@ -25,6 +25,7 @@ const tokenIds = [
 
 describe("NFTWorldExchange", async function () {
   let exchangeContract: Contract;
+
   before(async function () {
     const NFTWorldExchange = await ethers.getContractFactory(
       "NFTWorldExchangeImplementationV1"
@@ -38,6 +39,7 @@ describe("NFTWorldExchange", async function () {
 
     exchangeContract = await NFTWorldExchangeProxy.deployed();
   });
+
   //  Doug's address should be able to deposit Metaverse Coin
   it("Should allow owner address to approve exchange for deposit", async function () {
     const provider = new ethers.providers.JsonRpcProvider(
@@ -66,6 +68,7 @@ describe("NFTWorldExchange", async function () {
       )
     ).to.equal(BigNumber.from("100"));
   });
+
   it("Should allow owner address to deposit Metaverse Coin", async function () {
     const provider = new ethers.providers.JsonRpcProvider(
       "http://127.0.0.1:8545"
@@ -84,6 +87,7 @@ describe("NFTWorldExchange", async function () {
       BigNumber.from("100")
     );
   });
+
   it("Should not allow a user address to deposit Metaverse Coin", async function () {
     //  Another address should not be able to deposit Metaverse Coin
     const provider = new ethers.providers.JsonRpcProvider(
@@ -106,6 +110,7 @@ describe("NFTWorldExchange", async function () {
     await expect(exchangeContract.depositMetaverseCoin(BigNumber.from("100")))
       .to.be.reverted;
   });
+
   it("Should allow owner address to withdraw Metaverse Coin", async function () {
     //  Another address should not be able to deposit Metaverse Coin
     const provider = new ethers.providers.JsonRpcProvider(
@@ -123,22 +128,12 @@ describe("NFTWorldExchange", async function () {
       erc20ABI,
       owner
     );
-    const ownerAddress = await owner.getAddress();
-    await metaverseCoin.transfer(
-      exchangeContract.address,
-      BigNumber.from("100")
-    );
-    const ownerBalance = await metaverseCoin.balanceOf(ownerAddress);
-    await metaverseCoin.transferFrom(
-      exchangeContract.address,
-      ownerAddress,
-      BigNumber.from("100")
-    );
+
+    exchangeContract = exchangeContract.connect(owner);
+    await exchangeContract.withdrawMetaverseCoin(BigNumber.from("100"));
     expect(await metaverseCoin.balanceOf(exchangeContract.address)).to.equal(0);
-    expect(await metaverseCoin.balanceOf(ownerAddress)).to.equal(
-      ownerBalance + BigNumber.from("100")
-    );
   });
+
   //
   // Wearables
   //  Owner address should be able to deposit wearables into the contract
@@ -171,6 +166,7 @@ describe("NFTWorldExchange", async function () {
       exchangeContract.address
     );
   });
+
   it("Should allow owner address to deposit wearables", async function () {
     const provider = new ethers.providers.JsonRpcProvider(
       "http://127.0.0.1:8545"
@@ -206,9 +202,73 @@ describe("NFTWorldExchange", async function () {
       exchangeContract.address
     );
   });
+
+  //  Owner address should be able to withdraw wearables from the contract
+  it("Should alllow owner address to withdraw wearables", async function () {
+    const provider = new ethers.providers.JsonRpcProvider(
+      "http://127.0.0.1:8545"
+    );
+    const owner = provider.getSigner(
+      "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"
+    );
+    await provider.send("hardhat_impersonateAccount", [
+      "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
+    ]);
+
+    const wearablesContract = new Contract(
+      "0x13166638AD246fC02cf2c264D1776aEFC8431B76",
+      erc721ABI,
+      owner
+    );
+    const ownerAddress = await owner.getAddress();
+    exchangeContract = exchangeContract.connect(owner);
+    await exchangeContract.withdrawWearables("Green Dragon", tokenIds);
+    expect(await wearablesContract.ownerOf(tokenIds[0])).to.equal(ownerAddress);
+    expect(await wearablesContract.ownerOf(tokenIds[1])).to.equal(ownerAddress);
+    expect(await wearablesContract.ownerOf(tokenIds[2])).to.equal(ownerAddress);
+    expect(await wearablesContract.ownerOf(tokenIds[3])).to.equal(ownerAddress);
+  });
+
   //  User address should not be able to deposit wearables into the contract
-  //  Owner address should be albe to withdraw wearables from the contract
-  //  User address should not be able to deposit wearables into the contract
+  it("Should not allow user address to deposit wearables", async function () {
+    const provider = new ethers.providers.JsonRpcProvider(
+      "http://127.0.0.1:8545"
+    );
+    const owner = provider.getSigner(
+      "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"
+    );
+    const [user] = await ethers.getSigners();
+    const wearablesContract = new Contract(
+      "0x13166638AD246fC02cf2c264D1776aEFC8431B76",
+      erc721ABI,
+      owner
+    );
+    const ownerAddress = await owner.getAddress();
+    exchangeContract = exchangeContract.connect(owner);
+    await wearablesContract.transferFrom(
+      ownerAddress,
+      user.address,
+      tokenIds[0]
+    );
+    await wearablesContract.transferFrom(
+      ownerAddress,
+      user.address,
+      tokenIds[1]
+    );
+    await wearablesContract.transferFrom(
+      ownerAddress,
+      user.address,
+      tokenIds[2]
+    );
+    await wearablesContract.transferFrom(
+      ownerAddress,
+      user.address,
+      tokenIds[3]
+    );
+    exchangeContract = exchangeContract.connect(user);
+    await expect(exchangeContract.depositWearables("Green Dragon", tokenIds)).to
+      .be.reverted;
+  });
   //  A user should be able receive a wearable of a certain rarity in exchange for a specified amount of Metaverse Coin
   //  A user should not receive a wearable of a certain rarity if they don't have enough Metaverse Coin
   //  A user should receive a payout of 75% of what they paid in exchange for sending a purchased wearable back to the contract

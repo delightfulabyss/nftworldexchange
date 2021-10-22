@@ -45,7 +45,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         require(MetaverseCoin.balanceOf(address(this)) >= _amount, "NFTWorldExchange#withdrawMetaverseCoin: Insufficient balance for withdraw");
         MetaverseCoin.approve(_msgSender(), _amount);
-        MetaverseCoin.transferFrom(address(this), _msgSender(), _amount);
+        MetaverseCoin.transfer(_msgSender(), _amount);
         emit MetaverseCoinWithdraw(_msgSender(), _amount);
     }
 
@@ -62,7 +62,6 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
     function withdrawWearables(string memory _collectionName, uint256[] memory _tokenIds) virtual override external onlyRole(ADMIN_ROLE) {
         address collectionAddress = wearableContracts[_collectionName];
         IERC721 BaseERC721 = IERC721(collectionAddress);
-        //Possibly need token approval here
         require(numberTokensAvailable[_collectionName] >= _tokenIds.length, "NFTWorldExchange#withdrawWearables: Available tokens does not match number provided");
         numberTokensAvailable[_collectionName] -= _tokenIds.length;
         for (uint256 i = 0; i < _tokenIds.length; i++) {
