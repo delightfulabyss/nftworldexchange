@@ -104,6 +104,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
             BaseERC721.safeTransferFrom(address(this), _msgSender(), _tokenId);
             emit WearableExchanged(_msgSender(), _collectionName, _tokenId, amount);
         } else {
+            BaseERC721.approve(_msgSender(), _tokenId);
             BaseERC721.safeTransferFrom(address(this), _msgSender(), _tokenId);
             emit WearableExchanged(_msgSender(), _collectionName, _tokenId, 0);
         }

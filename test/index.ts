@@ -299,6 +299,7 @@ describe("NFTWorldExchange", async function () {
     const ownerAddress = await owner.getAddress();
     const [user] = await ethers.getSigners();
     exchangeContract = exchangeContract.connect(owner);
+    await wearablesContract.approve(exchangeContract.address, [2]);
     await exchangeContract.depositWearables("Green Dragon", [2]);
     await metaverseCoin.transfer(user.address, BigNumber.from("5"));
 
