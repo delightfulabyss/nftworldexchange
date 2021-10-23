@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "./IERC721CollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "hardhat/console.sol";
 
 contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver, AccessControlUpgradeable {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -89,7 +90,9 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         IERC721CollectionV2 WearablesCollection = IERC721CollectionV2(collectionAddress);
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         (string memory rarity, , , , , , ) = WearablesCollection.items(_itemId);
+        console.log(rarity);
         uint256 amount = exchangeRates[rarity];
+        console.log(amount);
         //Check if token is owned by exchange contract
         require(BaseERC721.ownerOf(_tokenId) == address(this), "NFTWorldExchange#getWearable: Token is not available");
         //Calculate the amount owed and make sure the user has that balance
@@ -120,6 +123,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         uint256 amount = exchangeRates[rarity];
         if (amount != 0){
             uint256 adjustedAmount =  amount - (amount / base_fee );
+            MetaverseCoin.approve(_msgSender(), adjustedAmount);
             MetaverseCoin.transferFrom(address(this), _msgSender(), adjustedAmount);
             emit WearableReturned(_msgSender(), _collectionName, _tokenId, adjustedAmount);
         } else {

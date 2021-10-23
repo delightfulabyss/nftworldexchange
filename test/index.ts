@@ -306,10 +306,6 @@ describe("NFTWorldExchange", async function () {
     await wearablesContract.approve(exchangeContract.address, [2]);
     await exchangeContract.depositWearables("Green Dragon", [2]);
 
-    await provider.send("hardhat_stopImpersonatingAccount", [
-      "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
-    ]);
-
     exchangeContract = exchangeContract.connect(user);
     metaverseCoin.approve(exchangeContract.address, utils.parseEther("2.0"));
     await exchangeContract.getWearable("Green Dragon", 0, 2);
