@@ -280,12 +280,16 @@ describe("NFTWorldExchange", async function () {
     const owner = provider.getSigner(
       "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"
     );
+    const ownerAddress = await owner.getAddress();
+    const [user] = await ethers.getSigners();
 
-    const wearablesContract = new Contract(
+    let wearablesContract = new Contract(
       "0x13166638AD246fC02cf2c264D1776aEFC8431B76",
       erc721ABI,
-      owner
+      user
     );
+
+    await wearablesContract.transferFrom(user.address, ownerAddress, 2);
 
     await provider.send("hardhat_impersonateAccount", [
       "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
@@ -296,8 +300,7 @@ describe("NFTWorldExchange", async function () {
       erc20ABI,
       owner
     );
-    const ownerAddress = await owner.getAddress();
-    const [user] = await ethers.getSigners();
+    wearablesContract = wearablesContract.connect(owner);
     exchangeContract = exchangeContract.connect(owner);
     await wearablesContract.approve(exchangeContract.address, [2]);
     await exchangeContract.depositWearables("Green Dragon", [2]);
