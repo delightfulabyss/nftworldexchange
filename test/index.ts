@@ -290,24 +290,30 @@ describe("NFTWorldExchange", async function () {
       user
     );
 
+    const metaverseCoin = new Contract(
+      "0xcae8304fa1f65bcd72e5605db648ee8d6d889509",
+      erc20ABI,
+      user
+    );
+
     await wearablesContract.transferFrom(user.address, ownerAddress, 2);
 
     await provider.send("hardhat_impersonateAccount", [
       "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
     ]);
 
-    let metaverseCoin = new Contract(
-      "0xcae8304fa1f65bcd72e5605db648ee8d6d889509",
-      erc20ABI,
-      owner
-    );
-    wearablesContract = wearablesContract.connect(owner);
     exchangeContract = exchangeContract.connect(owner);
-    await wearablesContract.approve(exchangeContract.address, [2]);
+    wearablesContract = wearablesContract.connect(owner);
+    await wearablesContract.approve(exchangeContract.address, 2);
     await exchangeContract.depositWearables("Green Dragon", [2]);
 
+    await provider.send("hardhat_stopImpersonatingAccount", [
+      "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
+    ]);
+
     exchangeContract = exchangeContract.connect(user);
-    metaverseCoin.approve(exchangeContract.address, utils.parseEther("2.0"));
+    wearablesContract = exchangeContract.connect(user);
+    await metaverseCoin.approve(exchangeContract.address, 2);
     await exchangeContract.getWearable("Green Dragon", 0, 2);
     expect(await wearablesContract.ownerOf(2)).to.equal(user.address);
     expect(

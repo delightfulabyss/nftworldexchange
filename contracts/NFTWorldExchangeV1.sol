@@ -90,9 +90,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         IERC721CollectionV2 WearablesCollection = IERC721CollectionV2(collectionAddress);
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         (string memory rarity, , , , , , ) = WearablesCollection.items(_itemId);
-        console.log(rarity);
         uint256 amount = exchangeRates[rarity];
-        console.log(amount);
         //Check if token is owned by exchange contract
         require(BaseERC721.ownerOf(_tokenId) == address(this), "NFTWorldExchange#getWearable: Token is not available");
         //Calculate the amount owed and make sure the user has that balance
