@@ -97,14 +97,11 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         numberTokensAvailable[_collectionName] --;
         if (amount != 0){
             //Transfer metaverse coin to exchange contract
-            MetaverseCoin.approve(address(this), amount);
             MetaverseCoin.transferFrom(_msgSender(), address(this), amount);
             //Transfer token to user
-            BaseERC721.approve(_msgSender(), _tokenId);
             BaseERC721.safeTransferFrom(address(this), _msgSender(), _tokenId);
             emit WearableExchanged(_msgSender(), _collectionName, _tokenId, amount);
         } else {
-            BaseERC721.approve(_msgSender(), _tokenId);
             BaseERC721.safeTransferFrom(address(this), _msgSender(), _tokenId);
             emit WearableExchanged(_msgSender(), _collectionName, _tokenId, 0);
         }

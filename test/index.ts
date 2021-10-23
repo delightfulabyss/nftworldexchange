@@ -296,7 +296,7 @@ describe("NFTWorldExchange", async function () {
       "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
     ]);
 
-    const metaverseCoin = new Contract(
+    let metaverseCoin = new Contract(
       "0xcae8304fa1f65bcd72e5605db648ee8d6d889509",
       erc20ABI,
       owner
@@ -311,10 +311,19 @@ describe("NFTWorldExchange", async function () {
     ]);
 
     exchangeContract = exchangeContract.connect(user);
-    // await exchangeContract.getWearable("Green Dragon", 0, 2);
-    // expect(await wearablesContract.ownerOf(2)).to.equal(user.address);
-    // expect(await metaverseCoin.balanceOf(user.address).to.equal(8));
-    // expect(await metaverseCoin.balanceOf(exchangeContract.address).to.equal(2));
+    metaverseCoin.approve(exchangeContract.address, utils.parseEther("2.0"));
+    await exchangeContract.getWearable("Green Dragon", 0, 2);
+    expect(await wearablesContract.ownerOf(2)).to.equal(user.address);
+    expect(
+      await metaverseCoin
+        .balanceOf(user.address)
+        .to.equal(utils.parseEther("8.0"))
+    );
+    expect(
+      await metaverseCoin
+        .balanceOf(exchangeContract.address)
+        .to.equal(utils.parseEther("2.0"))
+    );
   });
   //  A user should not receive a wearable of a certain rarity if they don't have enough Metaverse Coin
   //  A user should receive a payout of 75% of what they paid in exchange for sending a purchased wearable back to the contract
