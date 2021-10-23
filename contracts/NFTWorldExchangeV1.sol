@@ -93,7 +93,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         //Check if token is owned by exchange contract
         require(BaseERC721.ownerOf(_tokenId) == address(this), "NFTWorldExchange#getWearable: Token is not available");
         //Calculate the amount owed and make sure the user has that balance
-        require(MetaverseCoin.balanceOf(_msgSender()) >= amount, "NFTWorldExchange#getWearable: Exchange rate exceeds Metaverse Coin balance");
+        require(MetaverseCoin.balanceOf(_msgSender()) >= amount, "NFTWorldExchange#getWearable: Insufficient token balance");
         numberTokensAvailable[_collectionName] --;
         if (amount != 0){
             //Transfer metaverse coin to exchange contract
