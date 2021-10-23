@@ -23,11 +23,11 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         _setupRole(ADMIN_ROLE, _admin);
         metaverseCoinAddress = _metaverseCoin;
         base_fee = 250000000000000000;
-        exchangeRates["Common"] = 0;
-        exchangeRates["Rare"] = 1000000000000000000;
-        exchangeRates["Epic"] = 2000000000000000000;
-        exchangeRates["Legendary"] = 3000000000000000000;
-        exchangeRates["Mythic"] = 4000000000000000000;
+        exchangeRates["common"] = 0;
+        exchangeRates["rare"] = 1000000000000000000;
+        exchangeRates["epic"] = 2000000000000000000;
+        exchangeRates["legendary"] = 3000000000000000000;
+        exchangeRates["mythic"] = 4000000000000000000;
         for (uint256 i = 0; i < _collections.length; i++) {
             _addCollectionSupport(_collections[i]);
         }
@@ -100,6 +100,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
             MetaverseCoin.approve(address(this), amount);
             MetaverseCoin.transferFrom(_msgSender(), address(this), amount);
             //Transfer token to user
+            BaseERC721.approve(_msgSender(), _tokenId);
             BaseERC721.safeTransferFrom(address(this), _msgSender(), _tokenId);
             emit WearableExchanged(_msgSender(), _collectionName, _tokenId, amount);
         } else {
