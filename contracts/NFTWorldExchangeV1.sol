@@ -121,7 +121,6 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         uint256 amount = exchangeRates[rarity];
         if (amount != 0){
             uint256 adjustedAmount =  amount - (amount / base_fee );
-            MetaverseCoin.approve(_msgSender(), adjustedAmount);
             MetaverseCoin.transferFrom(address(this), _msgSender(), adjustedAmount);
             emit WearableReturned(_msgSender(), _collectionName, _tokenId, adjustedAmount);
         } else {
