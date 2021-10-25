@@ -5,6 +5,7 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 import "./INFTWorldExchange.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "./IERC721CollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "hardhat/console.sol";
@@ -15,7 +16,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
     mapping (string => uint256) public exchangeRates;
     mapping (string  => address) public wearableContracts;
     mapping (string => uint256) public numberTokensAvailable;
-    uint256 public base_fee;
+    uint256 public base_percentage;
 
     function initialize (address _metaverseCoin, address _admin, address[] memory _collections) external initializer() {
 
@@ -23,7 +24,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         __AccessControl_init();
         _setupRole(ADMIN_ROLE, _admin);
         metaverseCoinAddress = _metaverseCoin;
-        base_fee = 250000000000000000;
+        base_percentage = 25;
         exchangeRates["common"] = 0;
         exchangeRates["rare"] = 1000000000000000000;
         exchangeRates["epic"] = 2000000000000000000;
@@ -83,7 +84,6 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
 
         emit CollectionSupportAdded(collectionName, _address);
     }
-
     function getWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) virtual override external {
         address collectionAddress = wearableContracts[_collectionName];
         IERC721 BaseERC721 = IERC721(collectionAddress);
@@ -120,7 +120,8 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         (string memory rarity, , , , , , ) = WearablesCollection.items(_itemId);
         uint256 amount = exchangeRates[rarity];
         if (amount != 0){
-            uint256 adjustedAmount =  amount - (amount / base_fee );
+            uint256 adjustedAmount =  amount  - (amount / (100 / base_percentage ));
+            MetaverseCoin.approve(_msgSender(), adjustedAmount);
             MetaverseCoin.transferFrom(address(this), _msgSender(), adjustedAmount);
             emit WearableReturned(_msgSender(), _collectionName, _tokenId, adjustedAmount);
         } else {

@@ -377,7 +377,7 @@ describe("NFTWorldExchange", async function () {
         .reverted;
     });
     //  A user should receive a payout of 75% of what they paid in exchange for sending a purchased wearable back to the contract
-    it("Should allow the exchange of a wearable for 75% of exchange cost in Metaverse Coin", async function () {
+    it("Should allow user to return wearable for 75% of exchange cost in Metaverse Coin", async function () {
       const provider = new ethers.providers.JsonRpcProvider(
         "http://127.0.0.1:8545"
       );
@@ -396,36 +396,54 @@ describe("NFTWorldExchange", async function () {
       const metaverseCoin = new Contract(
         "0xcae8304fa1f65bcd72e5605db648ee8d6d889509",
         erc20ABI,
-        user
+        owner
       );
-
-      await wearablesContract.transferFrom(user.address, ownerAddress, 2);
 
       await provider.send("hardhat_impersonateAccount", [
         "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
       ]);
 
-      exchangeContract = exchangeContract.connect(owner);
-      wearablesContract = wearablesContract.connect(owner);
-      await wearablesContract.approve(exchangeContract.address, 2);
-      await exchangeContract.depositWearables("Green Dragon", [2]);
+      await metaverseCoin.transferFrom(
+        ownerAddress,
+        user.address,
+        utils.parseEther("1.0")
+      );
 
       await provider.send("hardhat_stopImpersonatingAccount", [
         "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
       ]);
 
       exchangeContract = exchangeContract.connect(user);
-      wearablesContract = wearablesContract.connect(user);
       await metaverseCoin.approve(
         exchangeContract.address,
         utils.parseEther("2.0")
       );
       await exchangeContract.getWearable("Green Dragon", 0, 2);
-    }
-    //  A user should not be able to send a wearable not originally deposited by Doug to the contract
-  });
 
-  //
-  // Upgrades
-  // Proxy should be able to be upgraded
+      await exchangeContract.returnWearable("Green Dragon", 0, 2);
+
+      expect(await wearablesContract.ownerOf(2)).to.equal(
+        exchangeContract.address
+      );
+      expect(await metaverseCoin.balanceOf(exchangeContract.address)).to.equal(
+        utils.parseEther(".5")
+      );
+      expect(await metaverseCoin.balanceOf(user.address)).to.equal(
+        utils.parseEther("1.5")
+      );
+    });
+    //  A user should not be able to send a wearable not originally deposited by Doug to the contract
+    describe("Upgrades", function () {
+      it("Should allow owner to upgrade the proxy contract with a new implementation", async function () {
+        const ExchangeContractV2 = await ethers.getContractFactory(
+          "NFTWorldExchangeImplementationV2"
+        );
+        const exchangeContractV2 = await upgrades.upgradeProxy(
+          "0xcae8304fa1f65bcd72e5605db648ee8d6d889509",
+          ExchangeContractV2
+        );
+        expect(await exchangeContractV2.sayHello()).to.equal()
+      });
+    });
+  });
 });
