@@ -433,17 +433,17 @@ describe("NFTWorldExchange", async function () {
       );
     });
     //  A user should not be able to send a wearable not originally deposited by Doug to the contract
-    describe("Upgrades", function () {
-      it("Should allow owner to upgrade the proxy contract with a new implementation", async function () {
-        const ExchangeContractV2 = await ethers.getContractFactory(
-          "NFTWorldExchangeImplementationV2"
-        );
-        const exchangeContractV2 = await upgrades.upgradeProxy(
-          "0xcae8304fa1f65bcd72e5605db648ee8d6d889509",
-          ExchangeContractV2
-        );
-        expect(await exchangeContractV2.sayHello()).to.equal()
-      });
+  });
+  describe("Upgrades", function () {
+    it("Should allow owner to upgrade the proxy contract with a new implementation", async function () {
+      const ExchangeContractV2 = await ethers.getContractFactory(
+        "NFTWorldExchangeImplementationV2"
+      );
+      const exchangeContractV2 = await upgrades.upgradeProxy(
+        "0xcae8304fa1f65bcd72e5605db648ee8d6d889509",
+        ExchangeContractV2
+      );
+      expect(await exchangeContractV2.sayHello()).to.equal("Hello");
     });
   });
 });

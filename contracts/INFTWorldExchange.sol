@@ -17,8 +17,6 @@ interface INFTWorldExchange {
 
     function addCollectionSupport(address _address) external;
 
-    function getAvailableTokens(string memory _collectionName) external returns(uint256[] memory);
-
     event MetaverseCoinDeposit(address indexed from, uint256 indexed value);
     event MetaverseCoinWithdraw(address indexed to, uint256 indexed value);
     event WearableDeposit(address indexed from, string indexed collectionName, uint256[] indexed tokenIds);
