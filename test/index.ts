@@ -381,10 +381,56 @@ describe("NFTWorldExchange", async function () {
       const provider = new ethers.providers.JsonRpcProvider(
         "http://127.0.0.1:8545"
       );
+
       const owner = provider.getSigner(
         "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"
       );
-      const ownerAddress = await owner.getAddress();
+      const [user] = await ethers.getSigners();
+
+      const wearablesContract = new Contract(
+        "0x13166638AD246fC02cf2c264D1776aEFC8431B76",
+        erc721ABI,
+        user
+      );
+
+      let metaverseCoin = new Contract(
+        "0xcae8304fa1f65bcd72e5605db648ee8d6d889509",
+        erc20ABI,
+        owner
+      );
+      await provider.send("hardhat_impersonateAccount", [
+        "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
+      ]);
+      await metaverseCoin.transfer(user.address, utils.parseEther("1.0"));
+
+      await provider.send("hardhat_stopImpersonatingAccount", [
+        "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
+      ]);
+      metaverseCoin = metaverseCoin.connect(user);
+      await metaverseCoin.approve(
+        exchangeContract.address,
+        utils.parseEther("2.0")
+      );
+      await exchangeContract.getWearable("Green Dragon", 0, 2);
+      await wearablesContract.approve(exchangeContract.address, 2);
+      await exchangeContract.returnWearable("Green Dragon", 0, 2);
+      expect(await wearablesContract.ownerOf(2)).to.equal(
+        exchangeContract.address
+      );
+      expect(await metaverseCoin.balanceOf(user.address)).to.equal(
+        utils.parseEther("1.5")
+      );
+      expect(await metaverseCoin.balanceOf(exchangeContract.address)).to.equal(
+        utils.parseEther("2.5")
+      );
+    });
+    it("Should not allow a user to return a wearable that was not originally deposited by the owner", async function () {
+      const provider = new ethers.providers.JsonRpcProvider(
+        "http://127.0.0.1:8545"
+      );
+      const owner = provider.getSigner(
+        "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"
+      );
       const [user] = await ethers.getSigners();
 
       const wearablesContract = new Contract(
@@ -403,11 +449,7 @@ describe("NFTWorldExchange", async function () {
         "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
       ]);
 
-      await metaverseCoin.transferFrom(
-        ownerAddress,
-        user.address,
-        utils.parseEther("1.0")
-      );
+      await metaverseCoin.transfer(user.address, utils.parseEther(".5"));
 
       await provider.send("hardhat_stopImpersonatingAccount", [
         "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
@@ -420,58 +462,9 @@ describe("NFTWorldExchange", async function () {
         utils.parseEther("2.0")
       );
       await exchangeContract.getWearable("Green Dragon", 0, 2);
-
-      await exchangeContract.returnWearable("Green Dragon", 0, 2);
-
-      expect(await wearablesContract.ownerOf(2)).to.equal(
-        exchangeContract.address
-      );
-      expect(await metaverseCoin.balanceOf(exchangeContract.address)).to.equal(
-        utils.parseEther(".5")
-      );
-      expect(await metaverseCoin.balanceOf(user.address)).to.equal(
-        utils.parseEther("1.5")
-      );
-    });
-    it("Should not allow a user to return a wearable that was not originally deposited by the owner", async function () {
-      const provider = new ethers.providers.JsonRpcProvider(
-        "http://127.0.0.1:8545"
-      );
-      const owner = provider.getSigner(
-        "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"
-      );
-      const ownerAddress = await owner.getAddress();
-      const [user] = await ethers.getSigners();
-
-      let metaverseCoin = new Contract(
-        "0xcae8304fa1f65bcd72e5605db648ee8d6d889509",
-        erc20ABI,
-        owner
-      );
-
-      await provider.send("hardhat_impersonateAccount", [
-        "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
-      ]);
-
-      await metaverseCoin.transferFrom(
-        ownerAddress,
-        user.address,
-        utils.parseEther("5.0")
-      );
-
-      await provider.send("hardhat_stopImpersonatingAccount", [
-        "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
-      ]);
-
-      exchangeContract = exchangeContract.connect(user);
-      metaverseCoin = metaverseCoin.connect(user);
-      await metaverseCoin.approve(
-        exchangeContract.address,
-        utils.parseEther("2.0")
-      );
-      await exchangeContract.getWearable("Green Dragon", 0, 2);
-
-      await expect(exchangeContract.returnWearable("Blue Whale", 0, 2)).to.be.reverted;
+      await wearablesContract.approve(exchangeContract.address, 2);
+      await expect(exchangeContract.returnWearable("Blue Whale", 0, 2)).to.be
+        .reverted;
     });
   });
   describe("Upgrades", function () {

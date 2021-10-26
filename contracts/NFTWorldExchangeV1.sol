@@ -84,6 +84,17 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
 
         emit CollectionSupportAdded(collectionName, _address);
     }
+
+    function getAvailableTokens(string memory _collectionName) public virtual override view returns (uint256[] memory) {
+        address collectionAddress = wearableContracts[_collectionName];
+        IERC721 BaseERC721 = IERC721(collectionAddress);
+        uint256[] memory tokenIds;
+        uint256 tokenNumber = BaseERC721.balanceOf(address(this));
+        for (uint256 i = 0; i < tokenNumber; i++) {
+            tokenIds.push(BaseERC721.tokenOfOwnerByIndex(address(this), i));
+        }
+        return tokenIds;    
+    };
     function getWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) virtual override external {
         address collectionAddress = wearableContracts[_collectionName];
         IERC721 BaseERC721 = IERC721(collectionAddress);
@@ -121,7 +132,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         uint256 amount = exchangeRates[rarity];
         if (amount != 0){
             uint256 adjustedAmount =  amount  - (amount / (100 / base_percentage ));
-            MetaverseCoin.transferFrom(address(this), _msgSender(), adjustedAmount);
+            MetaverseCoin.transfer(_msgSender(), adjustedAmount);
             emit WearableReturned(_msgSender(), _collectionName, _tokenId, adjustedAmount);
         } else {
             emit WearableReturned(_msgSender(), _collectionName, _tokenId, 0);
