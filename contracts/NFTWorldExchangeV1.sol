@@ -86,6 +86,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
     }
 
     function getAvailableTokens(string memory _collectionName) public virtual override view returns (uint256[] memory) {
+        require(wearableContracts[_collectionName] != address(0x0), "NFTWorldExchange#getAvailableTokens: Not valid collection name");
         address collectionAddress = wearableContracts[_collectionName];
         IERC721Enumerable ERC721Enumerable = IERC721Enumerable(collectionAddress);
         uint256[] memory tokenIds;

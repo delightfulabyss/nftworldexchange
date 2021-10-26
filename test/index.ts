@@ -466,6 +466,21 @@ describe("NFTWorldExchange", async function () {
       await expect(exchangeContract.returnWearable("Blue Whale", 0, 2)).to.be
         .reverted;
     });
+    it("Should allow a user to get a list of all tokens held by the exchange", async function () {
+      const provider = new ethers.providers.JsonRpcProvider(
+        "http://127.0.0.1:8545"
+      );
+      const owner = provider.getSigner(
+        "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"
+      );
+      
+      const [user] = await ethers.getSigners();
+
+      exchangeContract = exchangeContract.connect(owner);
+      await exchangeContract.depositWearables("Green Dragon", tokenIds);
+      exchangeContract = exchangeContract.connect(user);
+      expect(exchangeContract.getAvailableTokens("Green Dragon")).to.equal([2]);
+    });
   });
   describe("Upgrades", function () {
     it("Should allow owner to upgrade the proxy contract with a new implementation", async function () {
