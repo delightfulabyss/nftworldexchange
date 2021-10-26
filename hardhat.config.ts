@@ -41,6 +41,10 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
+  tenderly: {
+    project: "Project",
+    username: "BlockhainAnarchist",
+  },
 };
 
 export default config;
