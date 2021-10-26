@@ -482,9 +482,17 @@ describe("NFTWorldExchange", async function () {
         owner
       );
 
+      await provider.send("hardhat_impersonateAccount", [
+        "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
+      ]);
+
       exchangeContract = exchangeContract.connect(owner);
       await wearablesContract.approve(exchangeContract.address, 2);
       await exchangeContract.depositWearables("Green Dragon", tokenIds);
+
+      await provider.send("hardhat_stopImpersonatingAccount", [
+        "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
+      ]);
       exchangeContract = exchangeContract.connect(user);
       expect(exchangeContract.getAvailableTokens("Green Dragon")).to.equal([2]);
     });
