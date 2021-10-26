@@ -473,10 +473,17 @@ describe("NFTWorldExchange", async function () {
       const owner = provider.getSigner(
         "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"
       );
-      
+
       const [user] = await ethers.getSigners();
 
+      const wearablesContract = new Contract(
+        "0x13166638AD246fC02cf2c264D1776aEFC8431B76",
+        erc721ABI,
+        owner
+      );
+
       exchangeContract = exchangeContract.connect(owner);
+      await wearablesContract.approve(exchangeContract.address, 2);
       await exchangeContract.depositWearables("Green Dragon", tokenIds);
       exchangeContract = exchangeContract.connect(user);
       expect(exchangeContract.getAvailableTokens("Green Dragon")).to.equal([2]);
