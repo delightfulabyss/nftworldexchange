@@ -91,7 +91,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         uint256[] memory tokenIds;
         uint256 tokenNumber = ERC721Enumerable.balanceOf(address(this));
         for (uint256 i = 0; i < tokenNumber; i++) {
-            tokenIds.push(ERC721Enumerable.tokenOfOwnerByIndex(address(this), i));
+            tokenIds[i] = ERC721Enumerable.tokenOfOwnerByIndex(address(this), i);
         }
         return tokenIds;    
     }
