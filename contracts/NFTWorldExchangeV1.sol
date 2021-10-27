@@ -90,13 +90,11 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         address collectionAddress = wearableContracts[_collectionName];
         IERC721Enumerable ERC721Enumerable = IERC721Enumerable(collectionAddress);
         uint256 tokenNumber = ERC721Enumerable.balanceOf(address(this));
-        uint256 i = tokenNumber;
         uint256[] memory tokenIds = new uint256[](tokenNumber);
-        do {
+        for (uint256 i = 0; i < tokenNumber; i++) {
             uint256 id = ERC721Enumerable.tokenOfOwnerByIndex(address(this), i);
             tokenIds[i] = id;
-            i--;
-        } while (i < tokenNumber);
+        }
         return tokenIds;    
     }
     function getWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) virtual override external {
