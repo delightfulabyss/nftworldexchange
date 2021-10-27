@@ -467,34 +467,18 @@ describe("NFTWorldExchange", async function () {
         .reverted;
     });
     it("Should allow a user to get a list of all tokens held by the exchange", async function () {
-      const provider = new ethers.providers.JsonRpcProvider(
-        "http://127.0.0.1:8545"
-      );
-      const owner = provider.getSigner(
-        "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"
-      );
-
       const [user] = await ethers.getSigners();
-
       const wearablesContract = new Contract(
         "0x13166638AD246fC02cf2c264D1776aEFC8431B76",
         erc721ABI,
-        owner
+        user
       );
-
-      await provider.send("hardhat_impersonateAccount", [
-        "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
-      ]);
-
-      exchangeContract = exchangeContract.connect(owner);
       await wearablesContract.approve(exchangeContract.address, 2);
-      await exchangeContract.depositWearables("Green Dragon", tokenIds);
-
-      await provider.send("hardhat_stopImpersonatingAccount", [
-        "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
-      ]);
+      await exchangeContract.returnWearable("Green Dragon", 0, 2);
       exchangeContract = exchangeContract.connect(user);
-      expect(exchangeContract.getAvailableTokens("Green Dragon")).to.equal([2]);
+      expect(
+        await exchangeContract.getAvailableTokens("Green Dragon")
+      ).to.equal([2]);
     });
   });
   describe("Upgrades", function () {
