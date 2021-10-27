@@ -8,14 +8,12 @@ import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "./IERC721CollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "hardhat/console.sol";
 
 contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver, AccessControlUpgradeable {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     address public metaverseCoinAddress;
     mapping (string => uint256) public exchangeRates;
     mapping (string  => address) public wearableContracts;
-    mapping (string => uint256) public numberTokensAvailable;
     uint256 public base_percentage;
 
     function initialize (address _metaverseCoin, address _admin, address[] memory _collections) external initializer() {
@@ -54,7 +52,6 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
     function depositWearables(string memory _collectionName, uint256[] memory _tokenIds) virtual override external onlyRole(ADMIN_ROLE) {
         address collectionAddress = wearableContracts[_collectionName];
         IERC721 BaseERC721 = IERC721(collectionAddress);
-        numberTokensAvailable[_collectionName] += _tokenIds.length;
         for (uint256 i = 0; i < _tokenIds.length; i++) {
             BaseERC721.safeTransferFrom(_msgSender(), address(this), _tokenIds[i]);
         }
@@ -64,8 +61,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
     function withdrawWearables(string memory _collectionName, uint256[] memory _tokenIds) virtual override external onlyRole(ADMIN_ROLE) {
         address collectionAddress = wearableContracts[_collectionName];
         IERC721 BaseERC721 = IERC721(collectionAddress);
-        require(numberTokensAvailable[_collectionName] >= _tokenIds.length, "NFTWorldExchange#withdrawWearables: Available tokens does not match number provided");
-        numberTokensAvailable[_collectionName] -= _tokenIds.length;
+        require(getAvailableTokens(_collectionName).length >= _tokenIds.length, "NFTWorldExchange#withdrawWearables: Available tokens does not match number provided");
         for (uint256 i = 0; i < _tokenIds.length; i++) {
             BaseERC721.approve(_msgSender(), _tokenIds[i]);
             BaseERC721.safeTransferFrom(address(this), _msgSender(), _tokenIds[i]);
@@ -91,10 +87,12 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         IERC721Enumerable ERC721Enumerable = IERC721Enumerable(collectionAddress);
         uint256 tokenNumber = ERC721Enumerable.balanceOf(address(this));
         uint256[] memory tokenIds = new uint256[](tokenNumber);
-        for (uint256 i = 0; i < tokenNumber; i++) {
-            uint256 id = ERC721Enumerable.tokenOfOwnerByIndex(address(this), i);
-            tokenIds[i] = id;
-        }
+        uint256 i = tokenNumber;
+        do{
+            uint256 tokenId = ERC721Enumerable.tokenOfOwnerByIndex(address(this), tokenNumber - 1);
+            tokenIds[i - 1] = tokenId;
+            i--;
+        }while(i != 0);
         return tokenIds;    
     }
     function getWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) virtual override external {
@@ -108,7 +106,6 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         require(BaseERC721.ownerOf(_tokenId) == address(this), "NFTWorldExchange#getWearable: Token is not available");
         //Calculate the amount owed and make sure the user has that balance
         require(MetaverseCoin.balanceOf(_msgSender()) >= amount, "NFTWorldExchange#getWearable: Insufficient token balance");
-        numberTokensAvailable[_collectionName] --;
         if (amount != 0){
             //Transfer metaverse coin to exchange contract
             MetaverseCoin.transferFrom(_msgSender(), address(this), amount);
@@ -128,7 +125,6 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         IERC721CollectionV2 WearablesCollection = IERC721CollectionV2(collectionAddress);
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         require(wearableContracts[_collectionName] != address(0x0), "NFTWorldExchange#returnWearable: Not valid collection name");
-        numberTokensAvailable[_collectionName]++;
         BaseERC721.safeTransferFrom(_msgSender(), address(this), _tokenId);
         (string memory rarity, , , , , , ) = WearablesCollection.items(_itemId);
         uint256 amount = exchangeRates[rarity];

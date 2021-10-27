@@ -476,9 +476,11 @@ describe("NFTWorldExchange", async function () {
       await wearablesContract.approve(exchangeContract.address, 2);
       await exchangeContract.returnWearable("Green Dragon", 0, 2);
       exchangeContract = exchangeContract.connect(user);
-      expect(
-        await exchangeContract.getAvailableTokens("Green Dragon")
-      ).to.equal([2]);
+
+      const tokenArray = await exchangeContract.getAvailableTokens(
+        "Green Dragon"
+      );
+      expect(tokenArray[0]).to.equal(2);
     });
   });
   describe("Upgrades", function () {
