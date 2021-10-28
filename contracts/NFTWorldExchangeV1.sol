@@ -10,7 +10,7 @@ import "./IERC721CollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 
-/// @title An exchange for Metaverse Coin and Decentraland Wearables
+/// @title NFTWorld Exchange
 /// @author Matthew Watman
 contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver, AccessControlUpgradeable {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
