@@ -9,6 +9,9 @@ import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "./IERC721CollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+
+/// @title An exchange for Metaverse Coin and Decentraland Wearables
+/// @author Matthew Watman
 contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver, AccessControlUpgradeable {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     address public metaverseCoinAddress;
@@ -16,6 +19,9 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
     mapping (string  => address) public wearableContracts;
     uint256 public base_percentage;
 
+    /**
+     * @dev See {INFTWorldExchange-initialize}.
+     */
     function initialize (address _metaverseCoin, address _admin, address[] memory _collections) external initializer() {
 
         //Parent initializer chain
@@ -34,6 +40,9 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
 
     }
 
+    /**
+     * @dev See {INFTWorldExchange-depositMetaverseCoin}.
+     */
     function depositMetaverseCoin (uint256 _amount) virtual override external onlyRole(ADMIN_ROLE) {
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         require(MetaverseCoin.balanceOf(_msgSender()) >= _amount, "NFTWorldExchange#depositMetaverseCoin: Insufficient balance for deposit");
@@ -41,6 +50,9 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         emit MetaverseCoinDeposit(_msgSender(), _amount);
     }
 
+    /**
+     * @dev See {INFTWorldExchange-withdrawMetaverseCoin}.
+     */
     function withdrawMetaverseCoin (uint256 _amount) virtual override external onlyRole(ADMIN_ROLE) {
         IERC20 MetaverseCoin = IERC20(metaverseCoinAddress);
         require(MetaverseCoin.balanceOf(address(this)) >= _amount, "NFTWorldExchange#withdrawMetaverseCoin: Insufficient balance for withdraw");
@@ -49,6 +61,9 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         emit MetaverseCoinWithdraw(_msgSender(), _amount);
     }
 
+    /**
+     * @dev See {INFTWorldExchange-depositWearables}.
+     */
     function depositWearables(string memory _collectionName, uint256[] memory _tokenIds) virtual override external onlyRole(ADMIN_ROLE) {
         address collectionAddress = wearableContracts[_collectionName];
         IERC721 BaseERC721 = IERC721(collectionAddress);
@@ -58,6 +73,9 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         emit WearableDeposit(_msgSender(), _collectionName, _tokenIds);
     }
 
+    /**
+     * @dev See {INFTWorldExchange-withdrawWearables}.
+     */
     function withdrawWearables(string memory _collectionName, uint256[] memory _tokenIds) virtual override external onlyRole(ADMIN_ROLE) {
         address collectionAddress = wearableContracts[_collectionName];
         IERC721 BaseERC721 = IERC721(collectionAddress);
@@ -69,6 +87,9 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         emit WearableWithdraw(_msgSender(), _collectionName, _tokenIds);
     }
 
+    /**
+     * @dev See {INFTWorldExchange-addCollectionSupport}.
+     */
     function addCollectionSupport(address _address) virtual override external onlyRole(ADMIN_ROLE){
         _addCollectionSupport(_address);
     }
@@ -81,6 +102,9 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         emit CollectionSupportAdded(collectionName, _address);
     }
 
+    /**
+     * @dev See {INFTWorldExchange-getAvailableTokens}.
+     */
     function getAvailableTokens(string memory _collectionName) public virtual override view returns (uint256[] memory) {
         require(wearableContracts[_collectionName] != address(0x0), "NFTWorldExchange#getAvailableTokens: Not valid collection name");
         address collectionAddress = wearableContracts[_collectionName];
@@ -95,6 +119,10 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
         }while(i != 0);
         return tokenIds;    
     }
+
+    /**
+     * @dev See {INFTWorldExchange-getWearable}.
+     */
     function getWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) virtual override external {
         address collectionAddress = wearableContracts[_collectionName];
         IERC721 BaseERC721 = IERC721(collectionAddress);
@@ -119,6 +147,9 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
 
     }
 
+    /**
+     * @dev See {INFTWorldExchange-returnWearable}.
+     */
     function returnWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) virtual override external {
         address collectionAddress = wearableContracts[_collectionName];
         IERC721 BaseERC721 = IERC721(collectionAddress);
@@ -138,7 +169,9 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
 
         
     }
-
+    /**
+     * @dev See {IERC721Receiver-onERC721Received}.
+     */
     function onERC721Received(
         address,
         address,
