@@ -8,6 +8,7 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "@tenderly/hardhat-tenderly";
+import "hardhat-docgen";
 
 dotenv.config();
 
@@ -44,6 +45,11 @@ const config: HardhatUserConfig = {
   tenderly: {
     project: "Project",
     username: "BlockhainAnarchist",
+  },
+  docgen: {
+    clear: true,
+    runOnCompile: true,
+    only: ['NFTWorldExchange']
   },
 };
 
