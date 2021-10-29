@@ -34,11 +34,17 @@ interface INFTWorldExchange {
     /**
      * @dev Emitted when `tokenIds` from `collectionName` are queried from the exchange contract.
      */
-    event AvailableTokensQuery(string collectionName, uint256[] tokenIds);
+    event AvailableTokensQuery(string indexed collectionName, uint256[] indexed tokenIds);
+
     /**
      * @dev Emitted when `collectionName` is mapped to `_address` by a user.
      */
-    event CollectionSupportAdded(string collectionName, address _address);
+    event CollectionSupportAdded(string indexed collectionName, address indexed _address);
+
+    /**
+     * @dev Emitted when an exchange rate of `amount` is set for rarity type `rarity.
+     */
+    event ExchangeRateSet(string indexed rarity, uint256 indexed amount);
 
     /**
     * @notice Sends Metaverse Coin to the exchange contract.
@@ -83,6 +89,7 @@ interface INFTWorldExchange {
     * @param _tokenId The token id of the NFT.
      */
     function getWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) external;
+
     /**
     * @notice Sends an NFT in exchange for the original amount of Metaverse Coin minus a fee.
     * @dev The user must approve the exchange contract to transfer the NFT before calling this function.
@@ -91,6 +98,7 @@ interface INFTWorldExchange {
     * @param _tokenId The token id of the NFT.
      */
     function returnWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) external;
+
     /**
     * @notice Adds the NFT contract name and address to the exchange contract.
     * @dev The user must call this function so that the exchange contract can know which NFT contract to call.
@@ -98,5 +106,13 @@ interface INFTWorldExchange {
     *
      */
     function addCollectionSupport(address _address) external;
+
+    /*
+    * @notice Sets an exchange rate `_amount` for rarity type `_rarity`.
+    * @dev The user must call
+    * @param _address The name of the rarity.
+    * @param _amount The amount of Metaverse Coin. 
+    */
+     function setExchangeRate(string memory _rarity, uint256 _amount) external;
 
 }

@@ -171,6 +171,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
 
         
     }
+
     /**
      * @dev See {IERC721Receiver-onERC721Received}.
      */
@@ -182,17 +183,25 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
     ) public virtual override returns (bytes4) {
         return this.onERC721Received.selector;
     }
+
     /**
      * @dev See {PauseableUpgradeable-_pause}.
      */
     function pause() external onlyRole(ADMIN_ROLE) {
         _pause();
     }
+
     /**
      * @dev See {PauseableUpgradeable-_unpause}.
      */
     function unpause() external onlyRole(ADMIN_ROLE) {
         _unpause();
     }
+
+    function setExchangeRate(string memory _rarity, uint256 _amount) external onlyRole(ADMIN_ROLE) {
+        exchangeRates[_rarity] = _amount;
+        emit ExchangeRateSet(_rarity, _amount);
+    }
+    
     
 }
