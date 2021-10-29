@@ -1,31 +1,16 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// When running the script with `npx hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
 import { ethers, upgrades } from "hardhat";
 
 async function main() {
-  const provider = new ethers.providers.JsonRpcProvider(
-    "http://127.0.0.1:8545"
-  );
-  await provider.send("hardhat_impersonateAccount", [
-    "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
-  ]);
-
-  const signer = await provider.getSigner(
-    "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e"
-  );
-
+  const [deployer] = await ethers.getSigners();
   const NFTWorldExchange = await ethers.getContractFactory(
     "NFTWorldExchangeImplementationV1",
-    signer
+    deployer
   );
 
   const NFTWorldExchangeProxy = await upgrades.deployProxy(NFTWorldExchange, [
-    "0xcae8304fa1f65bcd72e5605db648ee8d6d889509",
+    "0x70D0Ed9b15F4375e31F372e093513042b1d6a520",
     "0xd5e9ef1cedad0d135d543d286a2c190b16cbb89e",
-    ["0x13166638AD246fC02cf2c264D1776aEFC8431B76"],
+    [],
   ]);
 
   await NFTWorldExchangeProxy.deployed();
@@ -36,8 +21,6 @@ async function main() {
   );
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
