@@ -34,6 +34,9 @@ const config: HardhatUserConfig = {
         url: process.env.POLYGON_URL || "",
       },
     },
+    mumbai: {
+      url: process.env.POLYGON_TESTNET_URL || "",
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
