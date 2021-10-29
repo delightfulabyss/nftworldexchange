@@ -51,7 +51,7 @@ const config: HardhatUserConfig = {
   },
   docgen: {
     clear: true,
-    runOnCompile: true,
+    runOnCompile: false,
     only: ["NFTWorldExchange"],
     except: ["V2"],
   },
