@@ -8,11 +8,12 @@ import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "./IERC721CollectionV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 
 
 /// @title NFTWorld Exchange
 /// @author @delightfulabyss
-contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver, AccessControlUpgradeable {
+contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver, AccessControlUpgradeable, PausableUpgradeable {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     address public metaverseCoinAddress;
     mapping (string => uint256) public exchangeRates;
@@ -26,6 +27,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
 
         //Parent initializer chain
         __AccessControl_init();
+        __Pausable_init();
         _setupRole(ADMIN_ROLE, _admin);
         metaverseCoinAddress = _metaverseCoin;
         base_percentage = 25;
@@ -123,7 +125,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
     /**
      * @dev See {INFTWorldExchange-getWearable}.
      */
-    function getWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) virtual override external {
+    function getWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) virtual override whenNotPaused external {
         address collectionAddress = wearableContracts[_collectionName];
         IERC721 BaseERC721 = IERC721(collectionAddress);
         IERC721CollectionV2 WearablesCollection = IERC721CollectionV2(collectionAddress);
@@ -150,7 +152,7 @@ contract NFTWorldExchangeImplementationV1 is INFTWorldExchange, IERC721Receiver,
     /**
      * @dev See {INFTWorldExchange-returnWearable}.
      */
-    function returnWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) virtual override external {
+    function returnWearable(string memory _collectionName, uint256 _itemId, uint256 _tokenId) virtual override whenNotPaused external {
         address collectionAddress = wearableContracts[_collectionName];
         IERC721 BaseERC721 = IERC721(collectionAddress);
         IERC721CollectionV2 WearablesCollection = IERC721CollectionV2(collectionAddress);
