@@ -7,7 +7,7 @@ interface INFTWorldExchange {
      */
     event MetaverseCoinDeposit(address indexed from, uint256 indexed amount);
     /**
-     * @dev Emitted when `amount` is transferred from the exchange *contract to `to` by a user.
+     * @dev Emitted when `amount` is transferred from the exchange contract to `to` by a user.
      */
     event MetaverseCoinWithdraw(address indexed to, uint256 indexed amount);
 
