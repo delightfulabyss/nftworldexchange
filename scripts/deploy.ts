@@ -1,10 +1,10 @@
 import { ethers, upgrades } from "hardhat";
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
+  const [signer] = await ethers.getSigners();
   const NFTWorldExchange = await ethers.getContractFactory(
     "NFTWorldExchangeImplementationV1",
-    deployer
+    signer
   );
 
   const NFTWorldExchangeProxy = await upgrades.deployProxy(NFTWorldExchange, [
